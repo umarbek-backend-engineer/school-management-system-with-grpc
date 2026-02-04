@@ -1,0 +1,72 @@
+[
+  {
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "johndoe@gmail.com",
+    "class": "A1",
+    "subject": "English for beginners"
+  },
+  {
+    "first_name": "Anna",
+    "last_name": "Brown",
+    "email": "annabrown@gmail.com",
+    "class": "A2",
+    "subject": "Mathematics"
+  },
+  {
+    "first_name": "Michael",
+    "last_name": "Smith",
+    "email": "michaelsmith@gmail.com",
+    "class": "A3",
+    "subject": "Physics"
+  },
+  {
+    "first_name": "Sarah",
+    "last_name": "Johnson",
+    "email": "sarahjohnson@gmail.com",
+    "class": "A4",
+    "subject": "Chemistry"
+  },
+  {
+    "first_name": "David",
+    "last_name": "Wilson",
+    "email": "davidwilson@gmail.com",
+    "class": "A5",
+    "subject": "Biology"
+  },
+  {
+    "first_name": "Emily",
+    "last_name": "Taylor",
+    "email": "emilytaylor@gmail.com",
+    "class": "A6",
+    "subject": "History"
+  },
+  {
+    "first_name": "Daniel",
+    "last_name": "Anderson",
+    "email": "danielanderson@gmail.com",
+    "class": "A7",
+    "subject": "Geography"
+  },
+  {
+    "first_name": "Laura",
+    "last_name": "Thomas",
+    "email": "laurathomas@gmail.com",
+    "class": "A8",
+    "subject": "Computer Science"
+  },
+  {
+    "first_name": "James",
+    "last_name": "Martin",
+    "email": "jamesmartin@gmail.com",
+    "class": "A9",
+    "subject": "Economics"
+  },
+  {
+    "first_name": "Olivia",
+    "last_name": "Lee",
+    "email": "olivialee@gmail.com",
+    "class": "A10",
+    "subject": "Literature"
+  }
+]

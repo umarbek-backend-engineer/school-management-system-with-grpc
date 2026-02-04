@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+// import "validate/validate.proto";
+
+package main;
+
+option go_package = "/proto/gen;grpcapipb";
+
+service StudentsService {
+    rpc GetStudents (GetStudentRequset) returns (Students);
+    rpc AddStudents (Students) returns (Students);
+    rpc UpdateStudents(Students) returns (Students);
+    rpc DeleteStudent (StudentIds) returns (DeleteStudentsConfirm);
+}
+
+message DeleteStudentsConfirm {
+    string status = 1;
+    repeated string deleted_ids = 2;
+}
+
+message StudentId {
+    string id = 1;
+}
+
+message StudentIds {
+    repeated StudentId studentIds = 1;
+}
+
+message GetStudentRequset {
+    Student student = 1;
+    repeated SortField sort_by = 2;
+    int32 page_num = 3;
+    int32 page_size = 4;
+}
+
+message SortField {
+    string field = 1;
+    Order order = 2;
+}
+
+enum Order {
+    ASC = 0;
+    DESC = 1;
+}
+
+message Student {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string class = 5;
+}
+
+message Students {
+    repeated Student students = 1;
+}

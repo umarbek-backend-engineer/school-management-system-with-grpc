@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+// import "validate/validate.proto";
+import "student.proto";
+
+package main;
+
+option go_package = "/proto/gen;grpcapipb";
+
+service TeachersService {
+    rpc GetTeachers (GetTeacherRequset) returns (Teachers);
+    rpc AddTeachers (Teachers) returns (Teachers);
+    rpc UpdateTeachers(Teachers) returns (Teachers);
+    rpc DeleteTeacher (TeacherIds) returns (DeleteTeacherConfirm);
+    rpc GetStudentsByClassTeacher (TeacherId) returns (Students);
+    rpc GetStudentCountByClassTeacher (TeacherId) returns (StudentCount);
+}
+
+message StudentCount {
+    bool status = 1;
+    int32 student_count = 2;
+}
+
+message DeleteTeacherConfirm {
+    string status = 1;
+    repeated string deleted_ids = 2;
+}
+
+message TeacherId {
+    string id = 1;
+}
+
+message TeacherIds {
+    repeated TeacherId teacherIds = 1;
+}
+
+message GetTeacherRequset {
+    Teacher teacher = 1;
+    repeated SortField sort_by = 2;
+}
+
+message Teacher {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string class = 5;
+    string subject = 6;
+}
+
+message Teachers {
+    repeated Teacher teachers = 1;
+}

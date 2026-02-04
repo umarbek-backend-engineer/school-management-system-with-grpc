@@ -1,0 +1,3 @@
+protoc -I=proto --go_out=. --go-grpc_out=. .\proto\main.proto .\proto\student.proto .\proto\exec.proto
+
+go get google.golang.org/grpc

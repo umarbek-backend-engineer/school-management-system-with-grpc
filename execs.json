@@ -1,0 +1,26 @@
+[
+  {
+    "first_name": "Alice",
+    "last_name": "Smith",
+    "email": "alicesmith@gmail.com",
+    "username": "Alice_Smith",
+    "password": "Alice12411241.",
+    "role": "admin"
+  },
+  {
+    "first_name": "Michael",
+    "last_name": "Johnson",
+    "email": "michael.johnson@gmail.com",
+    "username": "Michael_Johnson",
+    "password": "Michael9823!",
+    "role": "exec"
+  },
+  {
+    "first_name": "Sophia",
+    "last_name": "Brown",
+    "email": "sophia.brown@gmail.com",
+    "username": "Sophia_Brown",
+    "password": "Sophia#2025",
+    "role": "exec"
+  }
+]
