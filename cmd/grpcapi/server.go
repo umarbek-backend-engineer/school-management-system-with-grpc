@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"school_project_grpc/internals/api/handlers"
+	"school_project_grpc/internals/repositories/mongodb"
 	pb "school_project_grpc/proto/gen"
 
 	"github.com/joho/godotenv"
@@ -14,14 +15,19 @@ import (
 )
 
 func main() {
-
-	err := godotenv.Load(".env")
+	_, err := mongodb.CreatMongoClient()
+	if err != nil {
+		log.Println("Failed to connect mongoDB: ", err)
+		return
+	}
+	
+	err = godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Failed to load .env file: ", err)
 	}
 
 	port := os.Getenv("GRPC_SERVER_PORT")
-	
+
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatal("Failed to make listerer: ", err)
