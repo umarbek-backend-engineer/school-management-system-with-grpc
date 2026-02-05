@@ -2,12 +2,16 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 
 	"school_project_grpc/internals/models"
 	"school_project_grpc/internals/repositories"
+	"school_project_grpc/internals/repositories/mongodb"
 	"school_project_grpc/pkg/utils"
 	pb "school_project_grpc/proto/gen"
 
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -55,4 +59,50 @@ func (s *Server) UpdateTeachers(ctx context.Context, req *pb.Teachers) (*pb.Teac
 	}
 
 	return &pb.Teachers{Teachers: updatedTeachers}, nil
+}
+
+func (s *Server) DeleteTeacher(ctx context.Context, req *pb.TeacherIds) (*pb.DeleteTeacherConfirm, error) {
+	ids := req.TeacherIds
+	var teacherIDsTODelete []string
+
+	for _, v := range ids {
+		teacherIDsTODelete = append(teacherIDsTODelete, v.Id)
+	}
+
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	objectIds := make([]primitive.ObjectID, len(teacherIDsTODelete))
+
+	for _, id := range teacherIDsTODelete {
+		objectId, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return nil, utils.ErrorHandler(err, fmt.Sprintf("Invalid id: %v", id))
+		}
+		objectIds = append(objectIds, objectId)
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": objectIds}}
+
+	res, err := client.Database("school").Collection("teachers").DeleteMany(ctx, filter)
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+
+	if res.DeletedCount == 0 {
+		return nil, utils.ErrorHandler(err, "No teachers were deleted")
+	}
+
+	deletedIds := make([]string, res.DeletedCount)
+	for _, v := range objectIds {
+		deletedIds = append(deletedIds, v.Hex())
+	}
+
+	return &pb.DeleteTeacherConfirm{
+		Status:     "Teacher successfullt deleted",
+		DeletedIds: deletedIds,
+	}, nil
 }
