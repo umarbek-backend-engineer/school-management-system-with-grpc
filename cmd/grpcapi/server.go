@@ -22,7 +22,7 @@ func main() {
 	}
 	log.Println("🎉 mongoDB connected successfully")
 
-	err = godotenv.Load("cmd/grpcapi/.env")
+	err = godotenv.Load("./cmd/grpcapi/.env")
 	if err != nil {
 		log.Fatal("Failed to load .env file: ", err)
 	}
