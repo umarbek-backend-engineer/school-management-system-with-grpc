@@ -12,16 +12,16 @@ import (
 )
 
 func AddTeachersDBHandler(ctx context.Context, teacherFromReq []*pb.Teacher) ([]*pb.Teacher, error) {
-	db, err := mongodb.CreatMongoClient()
+	client, err := mongodb.CreatMongoClient()
 	if err != nil {
 		utils.ErrorHandler(err, "internal error")
 		return nil, err
 	}
-	defer db.Disconnect(ctx)
+	defer client.Disconnect(ctx)
 
 	newTeachers := make([]*models.Teacher, 0, len(teacherFromReq))
-	for i, pbTeacher := range teacherFromReq {
-		newTeachers[i] = mapPBTeacherToModelTeacher(pbTeacher)
+	for _, pbTeacher := range teacherFromReq {
+		newTeachers = append(newTeachers, mapPBTeacherToModelTeacher(pbTeacher))
 	}
 
 	var addedTeacher []*pb.Teacher
@@ -32,7 +32,7 @@ func AddTeachersDBHandler(ctx context.Context, teacherFromReq []*pb.Teacher) ([]
 			continue
 		}
 
-		result, err := db.Database("school").Collection("teachers").InsertOne(ctx, teacher)
+		result, err := client.Database("school").Collection("teachers").InsertOne(ctx, teacher)
 		if err != nil {
 			return nil, utils.ErrorHandler(err, "Error adding value into database")
 		}

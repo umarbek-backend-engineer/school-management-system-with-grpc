@@ -2,7 +2,6 @@ package mongodb
 
 import (
 	"context"
-	"log"
 	"school_project_grpc/pkg/utils"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,6 +22,5 @@ func CreatMongoClient() (*mongo.Client, error) {
 		return nil, utils.ErrorHandler(err, "Failed to ping to DataBase")
 	}
 
-	log.Println("🎉 mongoDB connected successfully")
 	return client, nil
 }
