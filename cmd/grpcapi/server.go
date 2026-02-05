@@ -20,8 +20,8 @@ func main() {
 		log.Println("Failed to connect mongoDB: ", err)
 		return
 	}
-	
-	err = godotenv.Load(".env")
+
+	err = godotenv.Load("cmd/grpcapi/.env")
 	if err != nil {
 		log.Fatal("Failed to load .env file: ", err)
 	}
@@ -42,6 +42,8 @@ func main() {
 	reflection.Register(grpcServer)
 
 	log.Println("Server is running on port", port)
+	log.Println("--------------------------------------")
+	log.Print("--------------------------------------\n\n")
 
 	err = grpcServer.Serve(lis)
 	if err != nil {
