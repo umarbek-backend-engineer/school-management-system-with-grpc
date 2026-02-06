@@ -11,7 +11,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -58,7 +57,7 @@ func AddTeachersDBHandler(ctx context.Context, teacherFromReq []*pb.Teacher) ([]
 }
 
 // Get teachers from MongoDB with optional sorting
-func GetTeachersDBhandler(ctx context.Context, sortOption bson.D, filter bson.M) ([]*pb.Teacher, error) {
+func GetTeachersDBhandler(ctx context.Context, sortOption bson.D, filter bson.M, pageSize, pageNumber uint32) ([]*pb.Teacher, error) {
 	client, err := mongodb.CreatMongoClient()
 	if err != nil {
 		return nil, utils.ErrorHandler(err, "Internal error")
@@ -67,12 +66,15 @@ func GetTeachersDBhandler(ctx context.Context, sortOption bson.D, filter bson.M)
 
 	coll := client.Database("school").Collection("teachers")
 
-	var cursor *mongo.Cursor
-	if len(sortOption) < 1 {
-		cursor, err = coll.Find(ctx, filter)
-	} else {
-		cursor, err = coll.Find(ctx, filter, options.Find().SetSort(sortOption))
+	findOptions := options.Find()
+
+	findOptions.SetSkip(int64((pageNumber - 1) * pageSize))
+	findOptions.SetLimit(int64(pageSize))
+
+	if len(sortOption) > 0 {
+		findOptions.SetSort(sortOption)
 	}
+	cursor, err := coll.Find(ctx, filter, findOptions)
 
 	if err != nil {
 		return nil, utils.ErrorHandler(err, "Internal error")

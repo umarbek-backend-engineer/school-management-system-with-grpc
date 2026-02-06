@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"school_project_grpc/internals/api/handlers"
-	"school_project_grpc/internals/repositories/mongodb"
 	pb "school_project_grpc/proto/gen"
 
 	"github.com/joho/godotenv"
@@ -16,16 +15,8 @@ import (
 
 func main() {
 
-	//checking  the data base if it works
-	_, err := mongodb.CreatMongoClient()
-	if err != nil {
-		log.Println("Failed to connect mongoDB: ", err)
-		return
-	}
-	log.Println("🎉 mongoDB connected successfully")
-
 	//loading  the /env file
-	err = godotenv.Load("./cmd/grpcapi/.env")
+	err := godotenv.Load("./cmd/grpcapi/.env")
 	if err != nil {
 		log.Fatal("Failed to load .env file: ", err)
 	}

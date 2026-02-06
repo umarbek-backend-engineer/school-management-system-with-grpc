@@ -217,6 +217,8 @@ type GetTeacherRequset struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Teacher       *Teacher               `protobuf:"bytes,1,opt,name=teacher,proto3" json:"teacher,omitempty"`
 	SortBy        []*SortField           `protobuf:"bytes,2,rep,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`
+	PageNum       uint32                 `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty"`
+	PageSize      uint32                 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -263,6 +265,20 @@ func (x *GetTeacherRequset) GetSortBy() []*SortField {
 		return x.SortBy
 	}
 	return nil
+}
+
+func (x *GetTeacherRequset) GetPageNum() uint32 {
+	if x != nil {
+		return x.PageNum
+	}
+	return 0
+}
+
+func (x *GetTeacherRequset) GetPageSize() uint32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
 }
 
 type Teacher struct {
@@ -412,10 +428,12 @@ const file_main_proto_rawDesc = "" +
 	"TeacherIds\x12/\n" +
 	"\n" +
 	"teacherIds\x18\x01 \x03(\v2\x0f.main.TeacherIdR\n" +
-	"teacherIds\"f\n" +
+	"teacherIds\"\x9e\x01\n" +
 	"\x11GetTeacherRequset\x12'\n" +
 	"\ateacher\x18\x01 \x01(\v2\r.main.TeacherR\ateacher\x12(\n" +
-	"\asort_by\x18\x02 \x03(\v2\x0f.main.SortFieldR\x06sortBy\"\x9b\x01\n" +
+	"\asort_by\x18\x02 \x03(\v2\x0f.main.SortFieldR\x06sortBy\x12\x19\n" +
+	"\bpage_num\x18\x03 \x01(\rR\apageNum\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\rR\bpageSize\"\x9b\x01\n" +
 	"\aTeacher\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +

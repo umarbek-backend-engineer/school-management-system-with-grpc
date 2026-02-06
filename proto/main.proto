@@ -37,6 +37,8 @@ message TeacherIds {
 message GetTeacherRequset {
     Teacher teacher = 1;
     repeated SortField sort_by = 2;
+    uint32 page_num = 3;
+    uint32 page_size = 4;
 }
 
 message Teacher {

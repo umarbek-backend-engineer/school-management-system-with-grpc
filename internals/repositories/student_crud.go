@@ -7,7 +7,9 @@ import (
 	"school_project_grpc/pkg/utils"
 	pb "school_project_grpc/proto/gen"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func AddStudentsDBHandler(ctx context.Context, studentsFromReq []*pb.Student) ([]*pb.Student, error) {
@@ -46,4 +48,39 @@ func AddStudentsDBHandler(ctx context.Context, studentsFromReq []*pb.Student) ([
 		addedStudent = append(addedStudent, pbStudent)
 	}
 	return addedStudent, nil
+}
+
+func GetStudentsDBHandler(ctx context.Context, sortOption bson.D, filter bson.M, pageSize, pageNumber uint32) ([]*pb.Student, error) {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return nil, err
+	}
+	defer client.Disconnect(ctx)
+
+	// getting collection of the execs
+	coll := client.Database("school").Collection("students")
+
+	findOptions := options.Find()
+
+	findOptions.SetSkip(int64((pageNumber - 1) * pageSize))
+	findOptions.SetLimit(int64(pageSize))
+
+	if len(sortOption) > 0 {
+		findOptions.SetSort(sortOption)
+	}
+	cursor, err := coll.Find(ctx, filter, findOptions)
+
+	// cheking the error from above coll.find
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Failed to fetch data from db")
+	}
+	defer cursor.Close(ctx)
+
+	// decode mongo documents to pb.students
+	students, err := DecodedEntities(ctx, cursor, func() *models.Student { return &models.Student{} }, func() *pb.Student { return &pb.Student{} })
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Failed to fetch data from db")
+	}
+
+	return students, nil
 }

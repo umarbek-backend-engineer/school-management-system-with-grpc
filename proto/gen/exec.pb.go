@@ -661,8 +661,6 @@ type GetExecRequset struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Exec          *Exec                  `protobuf:"bytes,1,opt,name=exec,proto3" json:"exec,omitempty"`
 	SortBy        []*SortField           `protobuf:"bytes,2,rep,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`
-	PageNum       int32                  `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty"`
-	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -709,20 +707,6 @@ func (x *GetExecRequset) GetSortBy() []*SortField {
 		return x.SortBy
 	}
 	return nil
-}
-
-func (x *GetExecRequset) GetPageNum() int32 {
-	if x != nil {
-		return x.PageNum
-	}
-	return 0
-}
-
-func (x *GetExecRequset) GetPageSize() int32 {
-	if x != nil {
-		return x.PageSize
-	}
-	return 0
 }
 
 type Exec struct {
@@ -943,13 +927,11 @@ const file_exec_proto_rawDesc = "" +
 	"\x06ExecId\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"1\n" +
 	"\aExecIds\x12&\n" +
-	"\aexecIds\x18\x01 \x03(\v2\f.main.ExecIdR\aexecIds\"\x92\x01\n" +
+	"\aexecIds\x18\x01 \x03(\v2\f.main.ExecIdR\aexecIds\"Z\n" +
 	"\x0eGetExecRequset\x12\x1e\n" +
 	"\x04exec\x18\x01 \x01(\v2\n" +
 	".main.ExecR\x04exec\x12(\n" +
-	"\asort_by\x18\x02 \x03(\v2\x0f.main.SortFieldR\x06sortBy\x12\x19\n" +
-	"\bpage_num\x18\x03 \x01(\x05R\apageNum\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"\x8c\x03\n" +
+	"\asort_by\x18\x02 \x03(\v2\x0f.main.SortFieldR\x06sortBy\"\x8c\x03\n" +
 	"\x04Exec\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +

@@ -47,8 +47,18 @@ func (s *Server) GetTeachers(ctx context.Context, req *pb.GetTeacherRequset) (*p
 	// Build sort options from request
 	sortOption := buildSortOptions(req.GetSortBy())
 
+	pageNumber := req.GetPageNum()
+	pageSize := req.GetPageSize()
+
+	if pageNumber < 1 {
+		pageNumber = 1
+	}
+	if pageSize < 1 {
+		pageSize = 10
+	}
+
 	// Fetch from database
-	teachers, err := repositories.GetTeachersDBhandler(ctx, sortOption, filter)
+	teachers, err := repositories.GetTeachersDBhandler(ctx, sortOption, filter, pageSize, pageNumber)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}

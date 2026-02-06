@@ -9,12 +9,11 @@
 package grpcapipb
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -214,8 +213,8 @@ type GetStudentRequset struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Student       *Student               `protobuf:"bytes,1,opt,name=student,proto3" json:"student,omitempty"`
 	SortBy        []*SortField           `protobuf:"bytes,2,rep,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`
-	PageNum       int32                  `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty"`
-	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	PageNum       uint32                 `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty"`
+	PageSize      uint32                 `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -264,14 +263,14 @@ func (x *GetStudentRequset) GetSortBy() []*SortField {
 	return nil
 }
 
-func (x *GetStudentRequset) GetPageNum() int32 {
+func (x *GetStudentRequset) GetPageNum() uint32 {
 	if x != nil {
 		return x.PageNum
 	}
 	return 0
 }
 
-func (x *GetStudentRequset) GetPageSize() int32 {
+func (x *GetStudentRequset) GetPageSize() uint32 {
 	if x != nil {
 		return x.PageSize
 	}
@@ -469,8 +468,8 @@ const file_student_proto_rawDesc = "" +
 	"\x11GetStudentRequset\x12'\n" +
 	"\astudent\x18\x01 \x01(\v2\r.main.StudentR\astudent\x12(\n" +
 	"\asort_by\x18\x02 \x03(\v2\x0f.main.SortFieldR\x06sortBy\x12\x19\n" +
-	"\bpage_num\x18\x03 \x01(\x05R\apageNum\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"D\n" +
+	"\bpage_num\x18\x03 \x01(\rR\apageNum\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\rR\bpageSize\"D\n" +
 	"\tSortField\x12\x14\n" +
 	"\x05field\x18\x01 \x01(\tR\x05field\x12!\n" +
 	"\x05order\x18\x02 \x01(\x0e2\v.main.OrderR\x05order\"\x81\x01\n" +

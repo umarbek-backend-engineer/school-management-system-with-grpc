@@ -83,8 +83,6 @@ message ExecIds {
 message GetExecRequset {
     Exec exec = 1;
     repeated SortField sort_by = 2;
-    int32 page_num = 3;
-    int32 page_size = 4;
 }
 
 message Exec {
