@@ -16,11 +16,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Add teachers
 func (s *Server) AddTeachers(ctx context.Context, req *pb.Teachers) (*pb.Teachers, error) {
 
+	// Validate: ID must be empty on create
 	for _, teacher := range req.Teachers {
 		if teacher.Id != "" {
-			return nil, status.Error(codes.InvalidArgument, "request is incorrect format: nun-empty field ID fields are not allowed.")
+			return nil, status.Error(codes.InvalidArgument,
+				"request is incorrect format: non-empty ID fields are not allowed.")
 		}
 	}
 
@@ -32,18 +35,19 @@ func (s *Server) AddTeachers(ctx context.Context, req *pb.Teachers) (*pb.Teacher
 	return &pb.Teachers{Teachers: addedTeacher}, nil
 }
 
+// Get teachers with filter + sort
 func (s *Server) GetTeachers(ctx context.Context, req *pb.GetTeacherRequset) (*pb.Teachers, error) {
 
-	// filtering, getting filter from the requst, another function
-
+	// Build Mongo filter from request
 	filter, err := buildfilter(req.Teacher, &models.Teacher{})
 	if err != nil {
 		return nil, utils.ErrorHandler(err, "internal err")
 	}
-	// sorting, getting sord option from the requst, another function
-	sortOption := buildSortOptions(req.GetSortBy())
-	//access the database to fetch data, another function
 
+	// Build sort options from request
+	sortOption := buildSortOptions(req.GetSortBy())
+
+	// Fetch from database
 	teachers, err := repositories.GetTeachersDBhandler(ctx, sortOption, filter)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -52,6 +56,7 @@ func (s *Server) GetTeachers(ctx context.Context, req *pb.GetTeacherRequset) (*p
 	return &pb.Teachers{Teachers: teachers}, nil
 }
 
+// Update teachers
 func (s *Server) UpdateTeachers(ctx context.Context, req *pb.Teachers) (*pb.Teachers, error) {
 	updatedTeachers, err := repositories.UpdateTeachersDBHandler(ctx, req.Teachers)
 	if err != nil {
@@ -61,10 +66,13 @@ func (s *Server) UpdateTeachers(ctx context.Context, req *pb.Teachers) (*pb.Teac
 	return &pb.Teachers{Teachers: updatedTeachers}, nil
 }
 
+// Delete teachers by IDs
 func (s *Server) DeleteTeacher(ctx context.Context, req *pb.TeacherIds) (*pb.DeleteTeacherConfirm, error) {
+
 	ids := req.TeacherIds
 	var teacherIDsTODelete []string
 
+	// Collect string IDs
 	for _, v := range ids {
 		teacherIDsTODelete = append(teacherIDsTODelete, v.Id)
 	}
@@ -75,8 +83,8 @@ func (s *Server) DeleteTeacher(ctx context.Context, req *pb.TeacherIds) (*pb.Del
 	}
 	defer client.Disconnect(ctx)
 
-	objectIds := make([]primitive.ObjectID, len(teacherIDsTODelete))
-
+	// Convert to Mongo ObjectIDs
+	objectIds := make([]primitive.ObjectID, 0, len(teacherIDsTODelete))
 	for _, id := range teacherIDsTODelete {
 		objectId, err := primitive.ObjectIDFromHex(id)
 		if err != nil {
@@ -85,6 +93,7 @@ func (s *Server) DeleteTeacher(ctx context.Context, req *pb.TeacherIds) (*pb.Del
 		objectIds = append(objectIds, objectId)
 	}
 
+	// Delete many by IDs
 	filter := bson.M{"_id": bson.M{"$in": objectIds}}
 
 	res, err := client.Database("school").Collection("teachers").DeleteMany(ctx, filter)
@@ -96,13 +105,14 @@ func (s *Server) DeleteTeacher(ctx context.Context, req *pb.TeacherIds) (*pb.Del
 		return nil, utils.ErrorHandler(err, "No teachers were deleted")
 	}
 
-	deletedIds := make([]string, res.DeletedCount)
+	// Return deleted IDs
+	deletedIds := make([]string, 0, len(objectIds))
 	for _, v := range objectIds {
 		deletedIds = append(deletedIds, v.Hex())
 	}
 
 	return &pb.DeleteTeacherConfirm{
-		Status:     "Teacher successfullt deleted",
+		Status:     "Teacher successfully deleted",
 		DeletedIds: deletedIds,
 	}, nil
 }

@@ -15,6 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Add teachers to MongoDB
 func AddTeachersDBHandler(ctx context.Context, teacherFromReq []*pb.Teacher) ([]*pb.Teacher, error) {
 	client, err := mongodb.CreatMongoClient()
 	if err != nil {
@@ -23,6 +24,7 @@ func AddTeachersDBHandler(ctx context.Context, teacherFromReq []*pb.Teacher) ([]
 	}
 	defer client.Disconnect(ctx)
 
+	// Convert pb -> model
 	newTeachers := make([]*models.Teacher, 0, len(teacherFromReq))
 	for _, pbTeacher := range teacherFromReq {
 		newTeachers = append(newTeachers, MapPBToModelTeacher(pbTeacher))
@@ -31,28 +33,31 @@ func AddTeachersDBHandler(ctx context.Context, teacherFromReq []*pb.Teacher) ([]
 	var addedTeacher []*pb.Teacher
 
 	for _, teacher := range newTeachers {
-
 		if teacher == nil {
 			continue
 		}
 
+		// Insert into MongoDB
 		result, err := client.Database("school").Collection("teachers").InsertOne(ctx, teacher)
 		if err != nil {
 			return nil, utils.ErrorHandler(err, "Error adding value into database")
 		}
 
+		// Save generated Mongo ID
 		objectID, ok := result.InsertedID.(primitive.ObjectID)
 		if ok {
 			teacher.Id = objectID.Hex()
 		}
 
+		// Convert model -> pb for response
 		pbTeacher := MapModelToPbTeacher(teacher)
-
 		addedTeacher = append(addedTeacher, pbTeacher)
 	}
+
 	return addedTeacher, nil
 }
 
+// Get teachers from MongoDB with optional sorting
 func GetTeachersDBhandler(ctx context.Context, sortOption bson.D, filter bson.M) ([]*pb.Teacher, error) {
 	client, err := mongodb.CreatMongoClient()
 	if err != nil {
@@ -74,7 +79,13 @@ func GetTeachersDBhandler(ctx context.Context, sortOption bson.D, filter bson.M)
 	}
 	defer cursor.Close(ctx)
 
-	teachers, err := DecodedEntities(ctx, cursor, func() *models.Teacher { return &models.Teacher{} }, func() *pb.Teacher { return &pb.Teacher{} })
+	// Decode Mongo documents -> pb teachers
+	teachers, err := DecodedEntities(
+		ctx,
+		cursor,
+		func() *models.Teacher { return &models.Teacher{} },
+		func() *pb.Teacher { return &pb.Teacher{} },
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -82,6 +93,7 @@ func GetTeachersDBhandler(ctx context.Context, sortOption bson.D, filter bson.M)
 	return teachers, nil
 }
 
+// Update teachers in MongoDB
 func UpdateTeachersDBHandler(ctx context.Context, pbTeachers []*pb.Teacher) ([]*pb.Teacher, error) {
 	client, err := mongodb.CreatMongoClient()
 	if err != nil {
@@ -90,20 +102,24 @@ func UpdateTeachersDBHandler(ctx context.Context, pbTeachers []*pb.Teacher) ([]*
 	defer client.Disconnect(ctx)
 
 	var updatedTeachers []*pb.Teacher
+
 	for _, teacher := range pbTeachers {
 
+		// Validate ID
 		if teacher.Id == "" {
 			return nil, utils.ErrorHandler(errors.New("Missing id: invalid request"), "ID cannot be blank")
 		}
 
+		// Convert pb -> model
 		modelTeacher := MapPBToModelTeacher(teacher)
 
+		// Convert string ID -> Mongo ObjectID
 		obj, err := primitive.ObjectIDFromHex(modelTeacher.Id)
 		if err != nil {
 			return nil, utils.ErrorHandler(err, "invalid id")
 		}
 
-		// conver the model teacher to bson document
+		// Convert model -> bson
 		mteacher, err := bson.Marshal(modelTeacher)
 		if err != nil {
 			return nil, utils.ErrorHandler(err, "Internal error")
@@ -115,18 +131,20 @@ func UpdateTeachersDBHandler(ctx context.Context, pbTeachers []*pb.Teacher) ([]*
 			return nil, utils.ErrorHandler(err, "Internal error")
 		}
 
-		// remove the _id field from the update document
+		// Remove _id from update
 		delete(updateDoc, "_id")
 
-		_, err = client.Database("school").Collection("teachers").UpdateOne(ctx, bson.M{"_id": obj}, bson.M{"$set": updateDoc})
+		// Update in MongoDB
+		_, err = client.Database("school").Collection("teachers").
+			UpdateOne(ctx, bson.M{"_id": obj}, bson.M{"$set": updateDoc})
 		if err != nil {
-			return nil, utils.ErrorHandler(err, fmt.Sprintf("error  updateing teacher id: %s", teacher.Id))
+			return nil, utils.ErrorHandler(err, fmt.Sprintf("error updating teacher id: %s", teacher.Id))
 		}
 
+		// Convert model -> pb for response
 		updatedTeacher := MapModelToPbTeacher(modelTeacher)
-
 		updatedTeachers = append(updatedTeachers, updatedTeacher)
-
 	}
+
 	return updatedTeachers, nil
 }

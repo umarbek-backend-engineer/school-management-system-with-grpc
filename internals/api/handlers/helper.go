@@ -11,19 +11,25 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// basicly these functions are used to control the out put of the monogdb request
+
+// Build MongoDB filter from request object
 func buildfilter(Obj interface{}, model interface{}) (bson.M, error) {
 	filter := bson.M{}
 
+	// If request object is nil, return empty filter
 	if Obj == nil || reflect.ValueOf(Obj).IsNil() {
 		return filter, nil
 	}
 
+	// Prepare reflection values
 	mval := reflect.ValueOf(model).Elem()
 	mtype := mval.Type()
 
 	rval := reflect.ValueOf(Obj).Elem()
 	rtype := rval.Type()
 
+	// Copy non-zero fields from request -> model
 	for i := 0; i < rval.NumField(); i++ {
 		fieldval := rval.Field(i)
 		fieldname := rtype.Field(i).Name
@@ -36,14 +42,15 @@ func buildfilter(Obj interface{}, model interface{}) (bson.M, error) {
 		}
 	}
 
-	// now I interate  model val to build filter using bson.M
-
+	// Build Mongo filter from model fields
 	for i := 0; i < mval.NumField(); i++ {
 		fieldval := mval.Field(i)
 
 		if fieldval.IsValid() && !fieldval.IsZero() {
 			bsonTag := mtype.Field(i).Tag.Get("bson")
 			bsonTag = strings.TrimSuffix(bsonTag, ",omitempty")
+
+			// Special case for Mongo _id
 			if bsonTag == "_id" {
 				objid, err := primitive.ObjectIDFromHex(fieldval.String())
 				if err != nil {
@@ -59,6 +66,7 @@ func buildfilter(Obj interface{}, model interface{}) (bson.M, error) {
 	return filter, nil
 }
 
+// Build Mongo sort options from gRPC request
 func buildSortOptions(sortFields []*pb.SortField) bson.D {
 	var sortOptions bson.D
 
@@ -71,5 +79,4 @@ func buildSortOptions(sortFields []*pb.SortField) bson.D {
 	}
 
 	return sortOptions
-
 }

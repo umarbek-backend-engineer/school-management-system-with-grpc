@@ -15,6 +15,8 @@ import (
 )
 
 func main() {
+
+	//checking  the data base if it works
 	_, err := mongodb.CreatMongoClient()
 	if err != nil {
 		log.Println("Failed to connect mongoDB: ", err)
@@ -22,6 +24,7 @@ func main() {
 	}
 	log.Println("🎉 mongoDB connected successfully")
 
+	//loading  the /env file
 	err = godotenv.Load("./cmd/grpcapi/.env")
 	if err != nil {
 		log.Fatal("Failed to load .env file: ", err)
@@ -37,17 +40,22 @@ func main() {
 	}
 	defer lis.Close()
 
+	// registering grpcServer, this is essential to run the server
 	grpcServer := grpc.NewServer()
+
+	// registering rpcs
 	pb.RegisterExecsServiceServer(grpcServer, &handlers.Server{})
 	pb.RegisterStudentsServiceServer(grpcServer, &handlers.Server{})
 	pb.RegisterTeachersServiceServer(grpcServer, &handlers.Server{})
 
+	// this function is responsible to skip the proto file when testing in postman, it is only used in production period to test
 	reflection.Register(grpcServer)
 
 	log.Println("Server is running on port", port)
 	log.Println("--------------------------------------")
 	log.Print("--------------------------------------\n\n")
 
+	// running the server
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		log.Fatal("Failed to run the grpc server")

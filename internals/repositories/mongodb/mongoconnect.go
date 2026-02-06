@@ -17,6 +17,7 @@ func CreatMongoClient() (*mongo.Client, error) {
 		return nil, utils.ErrorHandler(err, "Failed to connect to DataBase")
 	}
 
+	// checking if the api is able to connect to monogdata base
 	err = client.Ping(ctx, nil)
 	if err != nil {
 		return nil, utils.ErrorHandler(err, "Failed to ping to DataBase")
