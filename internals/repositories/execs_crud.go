@@ -2,14 +2,20 @@ package repositories
 
 import (
 	"context"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	"os"
 	"school_project_grpc/internals/models"
 	"school_project_grpc/internals/repositories/mongodb"
 	"school_project_grpc/pkg/utils"
 	pb "school_project_grpc/proto/gen"
+	"strconv"
 	"time"
 
+	"github.com/go-mail/mail"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -275,8 +281,8 @@ func ReactivateUserDBHandler(ctx context.Context, ids []string) (*mongo.UpdateRe
 		objectIDs = append(objectIDs, objectID) // store them in list var
 	}
 
-	filter := bson.M{"_id": bson.M{"&in": objectIDs}}          // create file to find the spacified row
-	update := bson.M{"&set": bson.M{"inactive_status": false}} // stating what to change
+	filter := bson.M{"_id": bson.M{"$in": objectIDs}}          // create file to find the spacified row
+	update := bson.M{"$set": bson.M{"inactive_status": false}} // stating what to change
 
 	res, err := client.Database("school").Collection("execs").UpdateMany(ctx, filter, update) // change the row
 	if err != nil {
@@ -301,12 +307,90 @@ func DeactivateUserDBHandler(ctx context.Context, ids []string) (*mongo.UpdateRe
 		objectIDs = append(objectIDs, objectID) // store them in list var
 	}
 
-	filter := bson.M{"_id": bson.M{"&in": objectIDs}}         // create file to find the spacified row
-	update := bson.M{"&set": bson.M{"inactive_status": true}} // stating what to change
+	filter := bson.M{"_id": bson.M{"$in": objectIDs}}         // create file to find the spacified row
+	update := bson.M{"$set": bson.M{"inactive_status": true}} // stating what to change
 
 	res, err := client.Database("school").Collection("execs").UpdateMany(ctx, filter, update) // change the row
 	if err != nil {
 		return nil, utils.ErrorHandler(err, "Failed to deactivate users")
 	}
 	return res, nil
+}
+
+func ForgotPasswordDBHandler(ctx context.Context, email string) error {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	var exec models.Exec
+	err = client.Database("school").Collection("execs").FindOne(ctx, bson.M{"email": email}).Decode(&exec) // getting the full user info and storing in in a var
+	if err != nil {
+		if err == mongo.ErrNoDocuments { // if there is not user with that username
+			return utils.ErrorHandler(err, "User not found. Incorrect password/username")
+		}
+		return utils.ErrorHandler(err, "Internal error")
+	}
+
+	tokenbyte := make([]byte, 32) // generate tokne to send to the user
+	_, err = rand.Read(tokenbyte)
+	if err != nil {
+		return utils.ErrorHandler(err, "Failed to generate token")
+	}
+
+	token := hex.EncodeToString(tokenbyte) // token that will be sent to the user
+	hashedToken := sha256.Sum256(tokenbyte)
+	hashedTokenString := hex.EncodeToString(hashedToken[:]) // token that will be stored in db
+
+	duration, err := strconv.Atoi(os.Getenv("RESET_TOKEN_EXP_DURATION"))
+	if err != nil {
+		return utils.ErrorHandler(err, "Failed to get token exp duration")
+	}
+
+	mins := time.Duration(duration)
+	expiry := time.Now().Add(mins * time.Minute).Format(time.RFC3339) // setting up expiry data for the token
+
+	update := bson.M{
+		"$set": bson.M{
+			"password_reset_token": hashedTokenString,
+			"password_token_exp":   expiry,
+		},
+	}
+	_, err = client.Database("school").Collection("execs").UpdateOne(ctx, bson.M{"email": email}, update) // setting token and token exp data into the exec that is requesting
+	if err != nil {
+		return utils.ErrorHandler(err, "Internal error")
+	}
+
+	resetURL := fmt.Sprintf("https://localhost:50051/execs/resetpassword/reset/%s", token) // this will be send to the exec
+
+	message := fmt.Sprintf(`
+		Forgot your password? Reset your password using the following link: 
+		%s
+		Please use the reset code: %s along with your request to change password. 
+		if you didn't request a password reset, please ignore this email. 
+
+		This link is only valid for %v minutes.`, resetURL, token, mins)
+
+	subject := "Your password reset link"
+
+	m := mail.NewMessage()
+	m.SetHeader("From", "schooladmin@gmail.com") // replay with your own email
+	m.SetHeader("To", email)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/plain", message)
+
+	d := mail.NewDialer("localhost", 1025, "", "")
+	err = d.DialAndSend(m)
+	if err != nil {
+		cleanup := bson.M{
+			"$set": bson.M{
+				"password_reset_token": nil,
+				"password_token_exp":   nil,
+			},
+		}
+		_, _ = client.Database("school").Collection("execs").UpdateOne(ctx, bson.M{"email": email}, cleanup) // resetting the token and token exp columns in case of an error
+		return utils.ErrorHandler(err, "Failed to send password reset link.")
+	}
+	return nil
 }

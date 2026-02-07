@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"school_project_grpc/internals/models"
 	"school_project_grpc/internals/repositories"
 	"school_project_grpc/pkg/utils"
@@ -144,5 +145,21 @@ func (s *Server) ReactivateUser(ctx context.Context, req *pb.ExecIds) (*pb.Confi
 
 	return &pb.Confirmation{
 		Confirmation: res.ModifiedCount > 0,
+	}, nil
+}
+
+// forgot passwor handler, sends token to the user's email throught which user can reset password
+func (s *Server) ForgotPassword(ctx context.Context, req *pb.ForgotPasswordRequst) (*pb.ForgotPasswordResponse, error) {
+	email := req.GetEmail()
+
+	// database operations
+	err := repositories.ForgotPasswordDBHandler(ctx, email)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.ForgotPasswordResponse{
+		Confirmation: true,
+		Message:      fmt.Sprintf("Password Reset link was sent to %s", email),
 	}, nil
 }
