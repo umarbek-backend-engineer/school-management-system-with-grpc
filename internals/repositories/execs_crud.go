@@ -29,7 +29,6 @@ func AddExecsDBHandler(ctx context.Context, execsFromReq []*pb.Exec) ([]*pb.Exec
 	newExecs := make([]*models.Exec, 0, len(execsFromReq)) //  pb value  to model value
 	for i, pbExec := range execsFromReq {
 		newExecs = append(newExecs, MapPBToModelExec(pbExec))
-
 		// encoding the password into hash (security)
 		hashedPassword, err := utils.HashPassword(newExecs[i].Password)
 		if err != nil {
@@ -157,7 +156,6 @@ func UpdateExecsDBHandler(ctx context.Context, pbExecs []*pb.Exec) ([]*pb.Exec, 
 
 // delete Exec in mongoDB by user id
 func DeleteExecsDBHandler(ctx context.Context, idstodelete []string) ([]string, error) {
-	
 
 	client, err := mongodb.CreatMongoClient()
 	if err != nil {
@@ -193,4 +191,23 @@ func DeleteExecsDBHandler(ctx context.Context, idstodelete []string) ([]string, 
 		deletedIds = append(deletedIds, v.Hex())
 	}
 	return deletedIds, nil
+}
+
+func LoginDBHandler(ctx context.Context, username string) (models.Exec, error) {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return models.Exec{}, utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	filter := bson.M{"username": username}
+	var exec models.Exec
+	err = client.Database("school").Collection("execs").FindOne(ctx, filter).Decode(&exec)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return models.Exec{}, utils.ErrorHandler(err, "User not found. Incorrect password/username")
+		}
+		return models.Exec{}, utils.ErrorHandler(err, "Internal error")
+	}
+	return exec, nil
 }

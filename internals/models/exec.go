@@ -5,7 +5,7 @@ type Exec struct {
 	FirstName          string `protobuf:"first_name,omitempty" bson:"first_name,omitempty"`
 	LastName           string `protobuf:"last_name,omitempty" bson:"last_name,omitempty"`
 	Email              string `protobuf:"email,omitempty" bson:"email,omitempty"`
-	UserName           string `protobuf:"username,omitmepty" bson:"username,omitempty"`
+	Username           string `protobuf:"username,omitmepty" bson:"username,omitempty"`
 	Password           string `protobuf:"password,omitmepty" bson:"password,omitempty"`
 	Role               string `protobuf:"role,omitmepty" bson:"role,omitempty"`
 	PasswordChangedAt  string `protobuf:"password_changed_at,omitmepty" bson:"password_changed_at,omitempty"`

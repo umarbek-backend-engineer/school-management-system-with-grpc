@@ -191,7 +191,7 @@ func DeleteTeachersDBHandler(ctx context.Context, idsTodelete []string) ([]strin
 	return deletedIds, nil
 }
 
-func GetStudentByTeacherIDDBhandler(ctx context.Context, id string) ([]*pb.Student, error) {
+func GetStudentCountByTeacherIDDBhandler(ctx context.Context, id string) ([]*pb.Student, error) {
 	// connecting to db and created client
 	client, err := mongodb.CreatMongoClient()
 	if err != nil {

@@ -100,7 +100,7 @@ func (s *Server) GetStudentsByClassTeacher(ctx context.Context, req *pb.TeacherI
 	// getting the id into variable
 	id := req.GetId()
 
-	students, err := repositories.GetStudentByTeacherIDDBhandler(ctx, id)
+	students, err := repositories.GetStudentCountByTeacherIDDBhandler(ctx, id)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

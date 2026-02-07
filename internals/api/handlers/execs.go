@@ -77,3 +77,31 @@ func (s *Server) DeleteExecs(ctx context.Context, req *pb.ExecIds) (*pb.DeleteEx
 		DeletedIds: deletedIds,
 	}, nil
 }
+
+func (s *Server) Login(ctx context.Context, req *pb.ExecLogInRequest) (*pb.ExecLogInResponse, error) {
+
+	exec, err := repositories.LoginDBHandler(ctx, req.GetUsername())
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if exec.InactiveStatus {
+		return nil, status.Error(codes.Unauthenticated, "Account is Inactive")
+	}
+
+	err = utils.VerifyPassword(req.GetPassword(), exec.Password)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "Account is Inactive")
+	}
+
+	token, err := utils.SingingJWT(exec.Id, exec.Username, exec.Role)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "Failed to created jwt token")
+	}
+
+	return &pb.ExecLogInResponse{
+		Status: true,
+		Token:  token,
+	}, nil
+
+}
