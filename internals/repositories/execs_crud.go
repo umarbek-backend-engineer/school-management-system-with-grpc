@@ -200,11 +200,12 @@ func LoginDBHandler(ctx context.Context, username string) (models.Exec, error) {
 	}
 	defer client.Disconnect(ctx)
 
+	// makeing filer for db to know which columt to change
 	filter := bson.M{"username": username}
 	var exec models.Exec
-	err = client.Database("school").Collection("execs").FindOne(ctx, filter).Decode(&exec)
+	err = client.Database("school").Collection("execs").FindOne(ctx, filter).Decode(&exec) // inserting the data recieved of the same id into exec
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if err == mongo.ErrNoDocuments { // if there is not user with that username
 			return models.Exec{}, utils.ErrorHandler(err, "User not found. Incorrect password/username")
 		}
 		return models.Exec{}, utils.ErrorHandler(err, "Internal error")
@@ -256,4 +257,56 @@ func UpdatePasswordDBHandler(ctx context.Context, req *pb.UpdatePasswordRequest)
 		return models.Exec{}, utils.ErrorHandler(err, "Internal error")
 	}
 	return user, nil
+}
+
+func ReactivateUserDBHandler(ctx context.Context, ids []string) (*mongo.UpdateResult, error) {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	var objectIDs []primitive.ObjectID // id to store in db format
+	for _, id := range ids {
+		objectID, err := primitive.ObjectIDFromHex(id) // making id in db format
+		if err != nil {
+			return nil, utils.ErrorHandler(err, "Invalid ID")
+		}
+		objectIDs = append(objectIDs, objectID) // store them in list var
+	}
+
+	filter := bson.M{"_id": bson.M{"&in": objectIDs}}          // create file to find the spacified row
+	update := bson.M{"&set": bson.M{"inactive_status": false}} // stating what to change
+
+	res, err := client.Database("school").Collection("execs").UpdateMany(ctx, filter, update) // change the row
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Failed to deactivate users")
+	}
+	return res, nil
+}
+
+func DeactivateUserDBHandler(ctx context.Context, ids []string) (*mongo.UpdateResult, error) {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	var objectIDs []primitive.ObjectID // id to store in db format
+	for _, id := range ids {
+		objectID, err := primitive.ObjectIDFromHex(id) // making id in db format
+		if err != nil {
+			return nil, utils.ErrorHandler(err, "Invalid ID")
+		}
+		objectIDs = append(objectIDs, objectID) // store them in list var
+	}
+
+	filter := bson.M{"_id": bson.M{"&in": objectIDs}}         // create file to find the spacified row
+	update := bson.M{"&set": bson.M{"inactive_status": true}} // stating what to change
+
+	res, err := client.Database("school").Collection("execs").UpdateMany(ctx, filter, update) // change the row
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Failed to deactivate users")
+	}
+	return res, nil
 }

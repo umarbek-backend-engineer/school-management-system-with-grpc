@@ -18,12 +18,8 @@ message DeleteStudentsConfirm {
     repeated string deleted_ids = 2;
 }
 
-message StudentId {
-    string id = 1;
-}
-
 message StudentIds {
-    repeated StudentId studentIds = 1;
+    repeated string studentIds = 1;
 }
 
 message GetStudentRequset {

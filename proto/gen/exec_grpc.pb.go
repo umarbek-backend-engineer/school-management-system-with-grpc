@@ -29,6 +29,7 @@ const (
 	ExecsService_ResetPassword_FullMethodName  = "/main.ExecsService/ResetPassword"
 	ExecsService_ForgotPassword_FullMethodName = "/main.ExecsService/ForgotPassword"
 	ExecsService_DeactivateUser_FullMethodName = "/main.ExecsService/DeactivateUser"
+	ExecsService_ReactivateUser_FullMethodName = "/main.ExecsService/ReactivateUser"
 )
 
 // ExecsServiceClient is the client API for ExecsService service.
@@ -45,6 +46,7 @@ type ExecsServiceClient interface {
 	ResetPassword(ctx context.Context, in *ResetPasswordRequst, opts ...grpc.CallOption) (*Confirmation, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequst, opts ...grpc.CallOption) (*ForgotPasswordResponse, error)
 	DeactivateUser(ctx context.Context, in *ExecIds, opts ...grpc.CallOption) (*Confirmation, error)
+	ReactivateUser(ctx context.Context, in *ExecIds, opts ...grpc.CallOption) (*Confirmation, error)
 }
 
 type execsServiceClient struct {
@@ -155,6 +157,16 @@ func (c *execsServiceClient) DeactivateUser(ctx context.Context, in *ExecIds, op
 	return out, nil
 }
 
+func (c *execsServiceClient) ReactivateUser(ctx context.Context, in *ExecIds, opts ...grpc.CallOption) (*Confirmation, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Confirmation)
+	err := c.cc.Invoke(ctx, ExecsService_ReactivateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ExecsServiceServer is the server API for ExecsService service.
 // All implementations must embed UnimplementedExecsServiceServer
 // for forward compatibility.
@@ -169,6 +181,7 @@ type ExecsServiceServer interface {
 	ResetPassword(context.Context, *ResetPasswordRequst) (*Confirmation, error)
 	ForgotPassword(context.Context, *ForgotPasswordRequst) (*ForgotPasswordResponse, error)
 	DeactivateUser(context.Context, *ExecIds) (*Confirmation, error)
+	ReactivateUser(context.Context, *ExecIds) (*Confirmation, error)
 	mustEmbedUnimplementedExecsServiceServer()
 }
 
@@ -208,6 +221,9 @@ func (UnimplementedExecsServiceServer) ForgotPassword(context.Context, *ForgotPa
 }
 func (UnimplementedExecsServiceServer) DeactivateUser(context.Context, *ExecIds) (*Confirmation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeactivateUser not implemented")
+}
+func (UnimplementedExecsServiceServer) ReactivateUser(context.Context, *ExecIds) (*Confirmation, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReactivateUser not implemented")
 }
 func (UnimplementedExecsServiceServer) mustEmbedUnimplementedExecsServiceServer() {}
 func (UnimplementedExecsServiceServer) testEmbeddedByValue()                      {}
@@ -410,6 +426,24 @@ func _ExecsService_DeactivateUser_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ExecsService_ReactivateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecIds)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExecsServiceServer).ReactivateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExecsService_ReactivateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExecsServiceServer).ReactivateUser(ctx, req.(*ExecIds))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ExecsService_ServiceDesc is the grpc.ServiceDesc for ExecsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -456,6 +490,10 @@ var ExecsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeactivateUser",
 			Handler:    _ExecsService_DeactivateUser_Handler,
+		},
+		{
+			MethodName: "ReactivateUser",
+			Handler:    _ExecsService_ReactivateUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

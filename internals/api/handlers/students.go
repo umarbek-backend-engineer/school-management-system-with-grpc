@@ -73,15 +73,7 @@ func (s *Server) UpdateStudents(ctx context.Context, req *pb.Students) (*pb.Stud
 // Delete teachers by IDs
 func (s *Server) DeleteStudents(ctx context.Context, req *pb.StudentIds) (*pb.DeleteStudentsConfirm, error) {
 
-	ids := req.StudentIds
-	var studentIDsTODelete []string
-
-	// Collect string IDs
-	for _, v := range ids {
-		studentIDsTODelete = append(studentIDsTODelete, v.Id)
-	}
-
-	deletedIds, err := repositories.DeleteStudentsDBHandler(ctx, studentIDsTODelete)
+	deletedIds, err := repositories.DeleteStudentsDBHandler(ctx, req.GetStudentIds())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}

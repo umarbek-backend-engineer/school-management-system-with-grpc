@@ -19,6 +19,7 @@ service ExecsService {
     rpc ResetPassword (ResetPasswordRequst) returns (Confirmation);
     rpc ForgotPassword (ForgotPasswordRequst) returns (ForgotPasswordResponse);
     rpc DeactivateUser (ExecIds ) returns (Confirmation);
+    rpc ReactivateUser (ExecIds ) returns (Confirmation);
 }
 
 message ExecLogInRequest {
@@ -72,12 +73,9 @@ message DeleteExecsConfirm {
     repeated string deleted_ids = 2;
 }
 
-message ExecId {
-    string id = 1;
-}
 
 message ExecIds {
-    repeated ExecId execIds = 1;
+    repeated string execIds = 1;
 }
 
 message GetExecRequset {

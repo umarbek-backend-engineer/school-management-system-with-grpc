@@ -59,15 +59,8 @@ func (s *Server) UpdateExecs(ctx context.Context, req *pb.Execs) (*pb.Execs, err
 }
 
 func (s *Server) DeleteExecs(ctx context.Context, req *pb.ExecIds) (*pb.DeleteExecsConfirm, error) {
-	ids := req.GetExecIds()
-	var execIDsTODelete []string
 
-	// Collect string IDs
-	for _, v := range ids {
-		execIDsTODelete = append(execIDsTODelete, v.Id)
-	}
-
-	deletedIds, err := repositories.DeleteExecsDBHandler(ctx, execIDsTODelete)
+	deletedIds, err := repositories.DeleteExecsDBHandler(ctx, req.GetExecIds())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -113,19 +106,43 @@ func (s *Server) Login(ctx context.Context, req *pb.ExecLogInRequest) (*pb.ExecL
 // function to update the user password
 func (s *Server) UpdatePassword(ctx context.Context, req *pb.UpdatePasswordRequest) (*pb.UpdatePasswordResponse, error) {
 
+	// update password db operations
 	user, err := repositories.UpdatePasswordDBHandler(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
+	// signing token
 	token, err := utils.SingingJWT(user.Id, user.Username, user.Role)
 	if err != nil {
 		return nil, utils.ErrorHandler(err, "Internal error")
 	}
 
+	// giving response to the user
 	return &pb.UpdatePasswordResponse{
 		PasswordUpdated: true,
 		Token:           token,
 	}, nil
+}
 
+func (s *Server) DeactivateUser(ctx context.Context, req *pb.ExecIds) (*pb.Confirmation, error) {
+	res, err := repositories.DeactivateUserDBHandler(ctx, req.GetExecIds())
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.Confirmation{
+		Confirmation: res.ModifiedCount > 0,
+	}, nil
+}
+
+func (s *Server) ReactivateUser(ctx context.Context, req *pb.ExecIds) (*pb.Confirmation, error) {
+	res, err := repositories.ReactivateUserDBHandler(ctx, req.GetExecIds())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Confirmation{
+		Confirmation: res.ModifiedCount > 0,
+	}, nil
 }

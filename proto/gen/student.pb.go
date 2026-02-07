@@ -121,60 +121,16 @@ func (x *DeleteStudentsConfirm) GetDeletedIds() []string {
 	return nil
 }
 
-type StudentId struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StudentId) Reset() {
-	*x = StudentId{}
-	mi := &file_student_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StudentId) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StudentId) ProtoMessage() {}
-
-func (x *StudentId) ProtoReflect() protoreflect.Message {
-	mi := &file_student_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StudentId.ProtoReflect.Descriptor instead.
-func (*StudentId) Descriptor() ([]byte, []int) {
-	return file_student_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *StudentId) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
 type StudentIds struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	StudentIds    []*StudentId           `protobuf:"bytes,1,rep,name=studentIds,proto3" json:"studentIds,omitempty"`
+	StudentIds    []string               `protobuf:"bytes,1,rep,name=studentIds,proto3" json:"studentIds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StudentIds) Reset() {
 	*x = StudentIds{}
-	mi := &file_student_proto_msgTypes[2]
+	mi := &file_student_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -186,7 +142,7 @@ func (x *StudentIds) String() string {
 func (*StudentIds) ProtoMessage() {}
 
 func (x *StudentIds) ProtoReflect() protoreflect.Message {
-	mi := &file_student_proto_msgTypes[2]
+	mi := &file_student_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,10 +155,10 @@ func (x *StudentIds) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentIds.ProtoReflect.Descriptor instead.
 func (*StudentIds) Descriptor() ([]byte, []int) {
-	return file_student_proto_rawDescGZIP(), []int{2}
+	return file_student_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *StudentIds) GetStudentIds() []*StudentId {
+func (x *StudentIds) GetStudentIds() []string {
 	if x != nil {
 		return x.StudentIds
 	}
@@ -221,7 +177,7 @@ type GetStudentRequset struct {
 
 func (x *GetStudentRequset) Reset() {
 	*x = GetStudentRequset{}
-	mi := &file_student_proto_msgTypes[3]
+	mi := &file_student_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -233,7 +189,7 @@ func (x *GetStudentRequset) String() string {
 func (*GetStudentRequset) ProtoMessage() {}
 
 func (x *GetStudentRequset) ProtoReflect() protoreflect.Message {
-	mi := &file_student_proto_msgTypes[3]
+	mi := &file_student_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -246,7 +202,7 @@ func (x *GetStudentRequset) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetStudentRequset.ProtoReflect.Descriptor instead.
 func (*GetStudentRequset) Descriptor() ([]byte, []int) {
-	return file_student_proto_rawDescGZIP(), []int{3}
+	return file_student_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetStudentRequset) GetStudent() *Student {
@@ -287,7 +243,7 @@ type SortField struct {
 
 func (x *SortField) Reset() {
 	*x = SortField{}
-	mi := &file_student_proto_msgTypes[4]
+	mi := &file_student_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -299,7 +255,7 @@ func (x *SortField) String() string {
 func (*SortField) ProtoMessage() {}
 
 func (x *SortField) ProtoReflect() protoreflect.Message {
-	mi := &file_student_proto_msgTypes[4]
+	mi := &file_student_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -312,7 +268,7 @@ func (x *SortField) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SortField.ProtoReflect.Descriptor instead.
 func (*SortField) Descriptor() ([]byte, []int) {
-	return file_student_proto_rawDescGZIP(), []int{4}
+	return file_student_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SortField) GetField() string {
@@ -342,7 +298,7 @@ type Student struct {
 
 func (x *Student) Reset() {
 	*x = Student{}
-	mi := &file_student_proto_msgTypes[5]
+	mi := &file_student_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -354,7 +310,7 @@ func (x *Student) String() string {
 func (*Student) ProtoMessage() {}
 
 func (x *Student) ProtoReflect() protoreflect.Message {
-	mi := &file_student_proto_msgTypes[5]
+	mi := &file_student_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -367,7 +323,7 @@ func (x *Student) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Student.ProtoReflect.Descriptor instead.
 func (*Student) Descriptor() ([]byte, []int) {
-	return file_student_proto_rawDescGZIP(), []int{5}
+	return file_student_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Student) GetId() string {
@@ -414,7 +370,7 @@ type Students struct {
 
 func (x *Students) Reset() {
 	*x = Students{}
-	mi := &file_student_proto_msgTypes[6]
+	mi := &file_student_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -426,7 +382,7 @@ func (x *Students) String() string {
 func (*Students) ProtoMessage() {}
 
 func (x *Students) ProtoReflect() protoreflect.Message {
-	mi := &file_student_proto_msgTypes[6]
+	mi := &file_student_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -439,7 +395,7 @@ func (x *Students) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Students.ProtoReflect.Descriptor instead.
 func (*Students) Descriptor() ([]byte, []int) {
-	return file_student_proto_rawDescGZIP(), []int{6}
+	return file_student_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Students) GetStudents() []*Student {
@@ -457,13 +413,11 @@ const file_student_proto_rawDesc = "" +
 	"\x15DeleteStudentsConfirm\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x1f\n" +
 	"\vdeleted_ids\x18\x02 \x03(\tR\n" +
-	"deletedIds\"\x1b\n" +
-	"\tStudentId\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"=\n" +
+	"deletedIds\",\n" +
 	"\n" +
-	"StudentIds\x12/\n" +
+	"StudentIds\x12\x1e\n" +
 	"\n" +
-	"studentIds\x18\x01 \x03(\v2\x0f.main.StudentIdR\n" +
+	"studentIds\x18\x01 \x03(\tR\n" +
 	"studentIds\"\x9e\x01\n" +
 	"\x11GetStudentRequset\x12'\n" +
 	"\astudent\x18\x01 \x01(\v2\r.main.StudentR\astudent\x12(\n" +
@@ -504,36 +458,34 @@ func file_student_proto_rawDescGZIP() []byte {
 }
 
 var file_student_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_student_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_student_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_student_proto_goTypes = []any{
 	(Order)(0),                    // 0: main.Order
 	(*DeleteStudentsConfirm)(nil), // 1: main.DeleteStudentsConfirm
-	(*StudentId)(nil),             // 2: main.StudentId
-	(*StudentIds)(nil),            // 3: main.StudentIds
-	(*GetStudentRequset)(nil),     // 4: main.GetStudentRequset
-	(*SortField)(nil),             // 5: main.SortField
-	(*Student)(nil),               // 6: main.Student
-	(*Students)(nil),              // 7: main.Students
+	(*StudentIds)(nil),            // 2: main.StudentIds
+	(*GetStudentRequset)(nil),     // 3: main.GetStudentRequset
+	(*SortField)(nil),             // 4: main.SortField
+	(*Student)(nil),               // 5: main.Student
+	(*Students)(nil),              // 6: main.Students
 }
 var file_student_proto_depIdxs = []int32{
-	2, // 0: main.StudentIds.studentIds:type_name -> main.StudentId
-	6, // 1: main.GetStudentRequset.student:type_name -> main.Student
-	5, // 2: main.GetStudentRequset.sort_by:type_name -> main.SortField
-	0, // 3: main.SortField.order:type_name -> main.Order
-	6, // 4: main.Students.students:type_name -> main.Student
-	4, // 5: main.StudentsService.GetStudents:input_type -> main.GetStudentRequset
-	7, // 6: main.StudentsService.AddStudents:input_type -> main.Students
-	7, // 7: main.StudentsService.UpdateStudents:input_type -> main.Students
-	3, // 8: main.StudentsService.DeleteStudents:input_type -> main.StudentIds
-	7, // 9: main.StudentsService.GetStudents:output_type -> main.Students
-	7, // 10: main.StudentsService.AddStudents:output_type -> main.Students
-	7, // 11: main.StudentsService.UpdateStudents:output_type -> main.Students
-	1, // 12: main.StudentsService.DeleteStudents:output_type -> main.DeleteStudentsConfirm
-	9, // [9:13] is the sub-list for method output_type
-	5, // [5:9] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	5, // 0: main.GetStudentRequset.student:type_name -> main.Student
+	4, // 1: main.GetStudentRequset.sort_by:type_name -> main.SortField
+	0, // 2: main.SortField.order:type_name -> main.Order
+	5, // 3: main.Students.students:type_name -> main.Student
+	3, // 4: main.StudentsService.GetStudents:input_type -> main.GetStudentRequset
+	6, // 5: main.StudentsService.AddStudents:input_type -> main.Students
+	6, // 6: main.StudentsService.UpdateStudents:input_type -> main.Students
+	2, // 7: main.StudentsService.DeleteStudents:input_type -> main.StudentIds
+	6, // 8: main.StudentsService.GetStudents:output_type -> main.Students
+	6, // 9: main.StudentsService.AddStudents:output_type -> main.Students
+	6, // 10: main.StudentsService.UpdateStudents:output_type -> main.Students
+	1, // 11: main.StudentsService.DeleteStudents:output_type -> main.DeleteStudentsConfirm
+	8, // [8:12] is the sub-list for method output_type
+	4, // [4:8] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_student_proto_init() }
@@ -547,7 +499,7 @@ func file_student_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_student_proto_rawDesc), len(file_student_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   7,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
