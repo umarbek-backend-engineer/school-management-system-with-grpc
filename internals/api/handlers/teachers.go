@@ -37,7 +37,7 @@ func (s *Server) GetTeachers(ctx context.Context, req *pb.GetTeacherRequset) (*p
 	// Build Mongo filter from request
 	filter, err := buildfilter(req.Teacher, &models.Teacher{})
 	if err != nil {
-		return nil, utils.ErrorHandler(err, "internal err")
+		return nil, utils.ErrorHandler(err, "Internal err")
 	}
 
 	// Build sort options from request
@@ -106,4 +106,18 @@ func (s *Server) GetStudentsByClassTeacher(ctx context.Context, req *pb.TeacherI
 	}
 
 	return &pb.Students{Students: students}, nil
+}
+
+func (s *Server) GetStudentCountByClassTeacher(ctx context.Context, req *pb.TeacherId) (*pb.StudentCount, error) {
+	id := req.GetId()
+
+	count, err := repositories.GetStudentCountByTeacherDBHandler(ctx, id)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.StudentCount{
+		Status:       true,
+		StudentCount: int32(count),
+	}, nil
 }

@@ -11,6 +11,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -188,4 +189,75 @@ func DeleteTeachersDBHandler(ctx context.Context, idsTodelete []string) ([]strin
 		deletedIds = append(deletedIds, v.Hex())
 	}
 	return deletedIds, nil
+}
+
+func GetStudentByTeacherIDDBhandler(ctx context.Context, id string) ([]*pb.Student, error) {
+	// connecting to db and created client
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Failed to create mongo client")
+	}
+	defer client.Disconnect(ctx) // disconnecting the client
+
+	// makeing the id in a way so that is the same as in database "fcayt32erf7atyeg76d2" = ObjectId("fcayt32erf7atyeg76d2")
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Failed to get primitive object id")
+	}
+
+	// retriving the Teacher from data base
+	var teacher models.Teacher
+	err = client.Database("school").Collection("teachers").FindOne(ctx, bson.M{"_id": objectID}).Decode(&teacher)
+	if err != nil {
+		if err == mongo.ErrNoDocuments { // if teacher is not found return invalid id message
+			return nil, utils.ErrorHandler(err, "Invalid ID")
+		}
+		return nil, utils.ErrorHandler(err, "Failed to retrive teacher")
+	}
+
+	cursor, err := client.Database("school").Collection("students").Find(ctx, bson.M{"calss": teacher.Class})
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal Error")
+	}
+	defer cursor.Close(ctx)
+
+	students, err := DecodedEntities(ctx, cursor, func() *models.Student { return &models.Student{} }, func() *pb.Student { return &pb.Student{} })
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal Error")
+	}
+
+	err = cursor.Err()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal Error")
+	}
+
+	return students, nil
+}
+
+func GetStudentCountByTeacherDBHandler(ctx context.Context, id string) (int64, error) {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return 0, utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return 0, utils.ErrorHandler(err, "Invalid ID")
+	}
+
+	var teacher models.Teacher
+	err = client.Database("school").Collection("teachers").FindOne(ctx, bson.M{"_id": objectID}).Decode(&teacher)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return 0, utils.ErrorHandler(err, "Teacher not found")
+		}
+		return 0, utils.ErrorHandler(err, "Internal error")
+	}
+
+	count, err := client.Database("school").Collection("students").CountDocuments(ctx, bson.M{"class": teacher.Class})
+	if err != nil {
+		return 0, utils.ErrorHandler(err, "Internal Error")
+	}
+	return count, nil
 }
