@@ -2,6 +2,8 @@ package repositories
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"school_project_grpc/internals/models"
 	"school_project_grpc/internals/repositories/mongodb"
 	"school_project_grpc/pkg/utils"
@@ -95,4 +97,100 @@ func GetExecsDBHandler(ctx context.Context, sortOption bson.D, filter bson.M) ([
 	}
 
 	return execs, nil
+}
+
+// Update Execs in MongoDB
+func UpdateExecsDBHandler(ctx context.Context, pbExecs []*pb.Exec) ([]*pb.Exec, error) {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "failed to created monogdb client")
+	}
+	defer client.Disconnect(ctx)
+
+	var updatedExecs []*pb.Exec
+
+	for _, exec := range pbExecs {
+
+		// Validate ID
+		if exec.Id == "" {
+			return nil, utils.ErrorHandler(errors.New("Missing id: invalid request"), "ID cannot be blank")
+		}
+
+		// Convert pb -> model
+		modelExec := MapPBToModelExec(exec)
+
+		// Convert string ID -> Mongo ObjectID
+		obj, err := primitive.ObjectIDFromHex(modelExec.Id)
+		if err != nil {
+			return nil, utils.ErrorHandler(err, "invalid id")
+		}
+
+		// Convert model -> bson
+		mExec, err := bson.Marshal(modelExec)
+		if err != nil {
+			return nil, utils.ErrorHandler(err, "Internal error")
+		}
+
+		var updateDoc bson.M
+		err = bson.Unmarshal(mExec, &updateDoc)
+		if err != nil {
+			return nil, utils.ErrorHandler(err, "Internal error")
+		}
+
+		// Remove _id from update
+		delete(updateDoc, "_id")
+
+		// Update in MongoDB
+		_, err = client.Database("school").Collection("Execs").
+			UpdateOne(ctx, bson.M{"_id": obj}, bson.M{"$set": updateDoc})
+		if err != nil {
+			return nil, utils.ErrorHandler(err, fmt.Sprintf("error updating exec id: %s", exec.Id))
+		}
+
+		// Convert model -> pb for response
+		updatedExec := MapModelToPbExec(modelExec)
+		updatedExecs = append(updatedExecs, updatedExec)
+	}
+
+	return updatedExecs, nil
+}
+
+// delete Exec in mongoDB by user id
+func DeleteExecsDBHandler(ctx context.Context, idstodelete []string) ([]string, error) {
+	
+
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	// Convert to Mongo ObjectIDs
+	objectIds := make([]primitive.ObjectID, 0, len(idstodelete))
+	for _, id := range idstodelete {
+		objectId, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return nil, utils.ErrorHandler(err, fmt.Sprintf("Invalid id: %v", id))
+		}
+		objectIds = append(objectIds, objectId)
+	}
+
+	// Delete many by IDs
+	filter := bson.M{"_id": bson.M{"$in": objectIds}}
+
+	res, err := client.Database("school").Collection("execs").DeleteMany(ctx, filter)
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+
+	if res.DeletedCount == 0 {
+		return nil, utils.ErrorHandler(err, "No Execs were deleted")
+	}
+
+	// Return deleted IDs
+	deletedIds := make([]string, 0, len(objectIds))
+	for _, v := range objectIds {
+		deletedIds = append(deletedIds, v.Hex())
+	}
+	return deletedIds, nil
 }

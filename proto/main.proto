@@ -11,7 +11,7 @@ service TeachersService {
     rpc GetTeachers (GetTeacherRequset) returns (Teachers);
     rpc AddTeachers (Teachers) returns (Teachers);
     rpc UpdateTeachers(Teachers) returns (Teachers);
-    rpc DeleteTeacher (TeacherIds) returns (DeleteTeacherConfirm);
+    rpc DeleteTeachers (TeacherIds) returns (DeleteTeacherConfirm);
     rpc GetStudentsByClassTeacher (TeacherId) returns (Students);
     rpc GetStudentCountByClassTeacher (TeacherId) returns (StudentCount);
 }

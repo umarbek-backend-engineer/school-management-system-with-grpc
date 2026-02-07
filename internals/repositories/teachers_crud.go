@@ -150,3 +150,42 @@ func UpdateTeachersDBHandler(ctx context.Context, pbTeachers []*pb.Teacher) ([]*
 
 	return updatedTeachers, nil
 }
+
+// delete teacher in mongoDB by user id
+func DeleteTeachersDBHandler(ctx context.Context, idsTodelete []string) ([]string, error) {
+
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	// Convert to Mongo ObjectIDs
+	objectIds := make([]primitive.ObjectID, 0, len(idsTodelete))
+	for _, id := range idsTodelete {
+		objectId, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return nil, utils.ErrorHandler(err, fmt.Sprintf("Invalid id: %v", id))
+		}
+		objectIds = append(objectIds, objectId)
+	}
+
+	// Delete many by IDs
+	filter := bson.M{"_id": bson.M{"$in": objectIds}}
+
+	res, err := client.Database("school").Collection("teachers").DeleteMany(ctx, filter)
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+
+	if res.DeletedCount == 0 {
+		return nil, utils.ErrorHandler(err, "No teachers were deleted")
+	}
+
+	// Return deleted IDs
+	deletedIds := make([]string, 0, len(objectIds))
+	for _, v := range objectIds {
+		deletedIds = append(deletedIds, v.Hex())
+	}
+	return deletedIds, nil
+}

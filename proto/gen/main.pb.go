@@ -443,12 +443,12 @@ const file_main_proto_rawDesc = "" +
 	"\x05class\x18\x05 \x01(\tR\x05class\x12\x18\n" +
 	"\asubject\x18\x06 \x01(\tR\asubject\"5\n" +
 	"\bTeachers\x12)\n" +
-	"\bteachers\x18\x01 \x03(\v2\r.main.TeacherR\bteachers2\xed\x02\n" +
+	"\bteachers\x18\x01 \x03(\v2\r.main.TeacherR\bteachers2\xee\x02\n" +
 	"\x0fTeachersService\x126\n" +
 	"\vGetTeachers\x12\x17.main.GetTeacherRequset\x1a\x0e.main.Teachers\x12-\n" +
 	"\vAddTeachers\x12\x0e.main.Teachers\x1a\x0e.main.Teachers\x120\n" +
-	"\x0eUpdateTeachers\x12\x0e.main.Teachers\x1a\x0e.main.Teachers\x12=\n" +
-	"\rDeleteTeacher\x12\x10.main.TeacherIds\x1a\x1a.main.DeleteTeacherConfirm\x12<\n" +
+	"\x0eUpdateTeachers\x12\x0e.main.Teachers\x1a\x0e.main.Teachers\x12>\n" +
+	"\x0eDeleteTeachers\x12\x10.main.TeacherIds\x1a\x1a.main.DeleteTeacherConfirm\x12<\n" +
 	"\x19GetStudentsByClassTeacher\x12\x0f.main.TeacherId\x1a\x0e.main.Students\x12D\n" +
 	"\x1dGetStudentCountByClassTeacher\x12\x0f.main.TeacherId\x1a\x12.main.StudentCountB\x16Z\x14/proto/gen;grpcapipbb\x06proto3"
 
@@ -484,13 +484,13 @@ var file_main_proto_depIdxs = []int32{
 	4,  // 4: main.TeachersService.GetTeachers:input_type -> main.GetTeacherRequset
 	6,  // 5: main.TeachersService.AddTeachers:input_type -> main.Teachers
 	6,  // 6: main.TeachersService.UpdateTeachers:input_type -> main.Teachers
-	3,  // 7: main.TeachersService.DeleteTeacher:input_type -> main.TeacherIds
+	3,  // 7: main.TeachersService.DeleteTeachers:input_type -> main.TeacherIds
 	2,  // 8: main.TeachersService.GetStudentsByClassTeacher:input_type -> main.TeacherId
 	2,  // 9: main.TeachersService.GetStudentCountByClassTeacher:input_type -> main.TeacherId
 	6,  // 10: main.TeachersService.GetTeachers:output_type -> main.Teachers
 	6,  // 11: main.TeachersService.AddTeachers:output_type -> main.Teachers
 	6,  // 12: main.TeachersService.UpdateTeachers:output_type -> main.Teachers
-	1,  // 13: main.TeachersService.DeleteTeacher:output_type -> main.DeleteTeacherConfirm
+	1,  // 13: main.TeachersService.DeleteTeachers:output_type -> main.DeleteTeacherConfirm
 	8,  // 14: main.TeachersService.GetStudentsByClassTeacher:output_type -> main.Students
 	0,  // 15: main.TeachersService.GetStudentCountByClassTeacher:output_type -> main.StudentCount
 	10, // [10:16] is the sub-list for method output_type

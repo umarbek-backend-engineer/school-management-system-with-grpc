@@ -22,7 +22,7 @@ const (
 	TeachersService_GetTeachers_FullMethodName                   = "/main.TeachersService/GetTeachers"
 	TeachersService_AddTeachers_FullMethodName                   = "/main.TeachersService/AddTeachers"
 	TeachersService_UpdateTeachers_FullMethodName                = "/main.TeachersService/UpdateTeachers"
-	TeachersService_DeleteTeacher_FullMethodName                 = "/main.TeachersService/DeleteTeacher"
+	TeachersService_DeleteTeachers_FullMethodName                = "/main.TeachersService/DeleteTeachers"
 	TeachersService_GetStudentsByClassTeacher_FullMethodName     = "/main.TeachersService/GetStudentsByClassTeacher"
 	TeachersService_GetStudentCountByClassTeacher_FullMethodName = "/main.TeachersService/GetStudentCountByClassTeacher"
 )
@@ -34,7 +34,7 @@ type TeachersServiceClient interface {
 	GetTeachers(ctx context.Context, in *GetTeacherRequset, opts ...grpc.CallOption) (*Teachers, error)
 	AddTeachers(ctx context.Context, in *Teachers, opts ...grpc.CallOption) (*Teachers, error)
 	UpdateTeachers(ctx context.Context, in *Teachers, opts ...grpc.CallOption) (*Teachers, error)
-	DeleteTeacher(ctx context.Context, in *TeacherIds, opts ...grpc.CallOption) (*DeleteTeacherConfirm, error)
+	DeleteTeachers(ctx context.Context, in *TeacherIds, opts ...grpc.CallOption) (*DeleteTeacherConfirm, error)
 	GetStudentsByClassTeacher(ctx context.Context, in *TeacherId, opts ...grpc.CallOption) (*Students, error)
 	GetStudentCountByClassTeacher(ctx context.Context, in *TeacherId, opts ...grpc.CallOption) (*StudentCount, error)
 }
@@ -77,10 +77,10 @@ func (c *teachersServiceClient) UpdateTeachers(ctx context.Context, in *Teachers
 	return out, nil
 }
 
-func (c *teachersServiceClient) DeleteTeacher(ctx context.Context, in *TeacherIds, opts ...grpc.CallOption) (*DeleteTeacherConfirm, error) {
+func (c *teachersServiceClient) DeleteTeachers(ctx context.Context, in *TeacherIds, opts ...grpc.CallOption) (*DeleteTeacherConfirm, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteTeacherConfirm)
-	err := c.cc.Invoke(ctx, TeachersService_DeleteTeacher_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, TeachersService_DeleteTeachers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ type TeachersServiceServer interface {
 	GetTeachers(context.Context, *GetTeacherRequset) (*Teachers, error)
 	AddTeachers(context.Context, *Teachers) (*Teachers, error)
 	UpdateTeachers(context.Context, *Teachers) (*Teachers, error)
-	DeleteTeacher(context.Context, *TeacherIds) (*DeleteTeacherConfirm, error)
+	DeleteTeachers(context.Context, *TeacherIds) (*DeleteTeacherConfirm, error)
 	GetStudentsByClassTeacher(context.Context, *TeacherId) (*Students, error)
 	GetStudentCountByClassTeacher(context.Context, *TeacherId) (*StudentCount, error)
 	mustEmbedUnimplementedTeachersServiceServer()
@@ -136,8 +136,8 @@ func (UnimplementedTeachersServiceServer) AddTeachers(context.Context, *Teachers
 func (UnimplementedTeachersServiceServer) UpdateTeachers(context.Context, *Teachers) (*Teachers, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeachers not implemented")
 }
-func (UnimplementedTeachersServiceServer) DeleteTeacher(context.Context, *TeacherIds) (*DeleteTeacherConfirm, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTeacher not implemented")
+func (UnimplementedTeachersServiceServer) DeleteTeachers(context.Context, *TeacherIds) (*DeleteTeacherConfirm, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTeachers not implemented")
 }
 func (UnimplementedTeachersServiceServer) GetStudentsByClassTeacher(context.Context, *TeacherId) (*Students, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStudentsByClassTeacher not implemented")
@@ -220,20 +220,20 @@ func _TeachersService_UpdateTeachers_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeachersService_DeleteTeacher_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TeachersService_DeleteTeachers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TeacherIds)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeachersServiceServer).DeleteTeacher(ctx, in)
+		return srv.(TeachersServiceServer).DeleteTeachers(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TeachersService_DeleteTeacher_FullMethodName,
+		FullMethod: TeachersService_DeleteTeachers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeachersServiceServer).DeleteTeacher(ctx, req.(*TeacherIds))
+		return srv.(TeachersServiceServer).DeleteTeachers(ctx, req.(*TeacherIds))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -294,8 +294,8 @@ var TeachersService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TeachersService_UpdateTeachers_Handler,
 		},
 		{
-			MethodName: "DeleteTeacher",
-			Handler:    _TeachersService_DeleteTeacher_Handler,
+			MethodName: "DeleteTeachers",
+			Handler:    _TeachersService_DeleteTeachers_Handler,
 		},
 		{
 			MethodName: "GetStudentsByClassTeacher",

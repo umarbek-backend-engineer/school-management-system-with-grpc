@@ -60,3 +60,34 @@ func (s *Server) GetStudents(ctx context.Context, req *pb.GetStudentRequset) (*p
 
 	return &pb.Students{Students: students}, nil
 }
+
+func (s *Server) UpdateStudents(ctx context.Context, req *pb.Students) (*pb.Students, error) {
+	students, err := repositories.UpdateStudentsDBHandler(ctx, req.Students)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.Students{Students: students}, nil
+}
+
+// Delete teachers by IDs
+func (s *Server) DeleteTeacher(ctx context.Context, req *pb.StudentIds) (*pb.DeleteStudentsConfirm, error) {
+
+	ids := req.StudentIds
+	var studentIDsTODelete []string
+
+	// Collect string IDs
+	for _, v := range ids {
+		studentIDsTODelete = append(studentIDsTODelete, v.Id)
+	}
+
+	deletedIds, err := repositories.DeleteStudentsDBHandler(ctx, studentIDsTODelete)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return &pb.DeleteStudentsConfirm{
+		Status:     "Students successfully deleted",
+		DeletedIds: deletedIds,
+	}, nil
+}

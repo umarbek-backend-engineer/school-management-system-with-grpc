@@ -48,3 +48,32 @@ func (s *Server) GetExecs(ctx context.Context, req *pb.GetExecRequset) (*pb.Exec
 
 	return &pb.Execs{Execs: execs}, nil
 }
+
+func (s *Server) UpdateExecs(ctx context.Context, req *pb.Execs) (*pb.Execs, error) {
+	execs, err := repositories.UpdateExecsDBHandler(ctx, req.Execs)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.Execs{Execs: execs}, nil
+}
+
+func (s *Server) DeleteExecs(ctx context.Context, req *pb.ExecIds) (*pb.DeleteExecsConfirm, error) {
+	ids := req.GetExecIds()
+	var execIDsTODelete []string
+
+	// Collect string IDs
+	for _, v := range ids {
+		execIDsTODelete = append(execIDsTODelete, v.Id)
+	}
+
+	deletedIds, err := repositories.DeleteExecsDBHandler(ctx, execIDsTODelete)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return &pb.DeleteExecsConfirm{
+		Status:     "Execs successfully deleted",
+		DeletedIds: deletedIds,
+	}, nil
+}
