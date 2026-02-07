@@ -27,12 +27,7 @@ Requirements / assumptions:
 Why generics:
 - So you can reuse this logic for Teacher, Exec, and any other entity without duplicating code.
 */
-func DecodedEntities[T any, M any](
-	ctx context.Context,
-	cursor *mongo.Cursor,
-	newmodel func() *M,
-	newentity func() *T,
-) ([]*T, error) {
+func DecodedEntities[T any, M any](ctx context.Context, cursor *mongo.Cursor, newmodel func() *M, newentity func() *T) ([]*T, error) {
 
 	var entities []*T
 

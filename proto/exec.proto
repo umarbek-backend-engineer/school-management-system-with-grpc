@@ -11,7 +11,7 @@ service ExecsService {
     rpc GetExecs (GetExecRequset) returns (Execs);
     rpc AddExecs (Execs) returns (Execs);
     rpc UpdateExecs(Execs) returns (Execs);
-    rpc DeleteExec (ExecIds) returns (DeleteExecsConfirm);
+    rpc DeleteExecs (ExecIds) returns (DeleteExecsConfirm);
 
     rpc Login(ExecLogInRequest) returns (ExecLogInResponse);
     rpc Logout(EmptyRequest) returns (ExecLogoutResponse);

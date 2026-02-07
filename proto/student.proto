@@ -10,7 +10,7 @@ service StudentsService {
     rpc GetStudents (GetStudentRequset) returns (Students);
     rpc AddStudents (Students) returns (Students);
     rpc UpdateStudents(Students) returns (Students);
-    rpc DeleteStudent (StudentIds) returns (DeleteStudentsConfirm);
+    rpc DeleteStudents (StudentIds) returns (DeleteStudentsConfirm);
 }
 
 message DeleteStudentsConfirm {

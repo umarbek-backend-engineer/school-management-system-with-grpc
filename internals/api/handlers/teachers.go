@@ -93,3 +93,17 @@ func (s *Server) DeleteTeachers(ctx context.Context, req *pb.TeacherIds) (*pb.De
 		DeletedIds: deletedIds,
 	}, nil
 }
+
+// get students that are asigned to a spacific id
+func (s *Server) GetStudentsByClassTeacher(ctx context.Context, req *pb.TeacherId) (*pb.Students, error) {
+
+	// getting the id into variable
+	id := req.GetId()
+
+	students, err := repositories.GetStudentByTeacherIDDBhandler(ctx, id)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.Students{Students: students}, nil
+}

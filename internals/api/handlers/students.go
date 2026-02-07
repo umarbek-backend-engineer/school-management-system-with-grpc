@@ -71,7 +71,7 @@ func (s *Server) UpdateStudents(ctx context.Context, req *pb.Students) (*pb.Stud
 }
 
 // Delete teachers by IDs
-func (s *Server) DeleteTeacher(ctx context.Context, req *pb.StudentIds) (*pb.DeleteStudentsConfirm, error) {
+func (s *Server) DeleteStudents(ctx context.Context, req *pb.StudentIds) (*pb.DeleteStudentsConfirm, error) {
 
 	ids := req.StudentIds
 	var studentIDsTODelete []string

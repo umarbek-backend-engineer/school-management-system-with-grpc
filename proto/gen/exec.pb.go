@@ -949,13 +949,12 @@ const file_exec_proto_rawDesc = "" +
 	"\x0einactiveStatus\x18\f \x01(\bR\x0einactiveStatus\")\n" +
 	"\x05Execs\x12 \n" +
 	"\x05execs\x18\x01 \x03(\v2\n" +
-	".main.ExecR\x05execs2\xc3\x04\n" +
+	".main.ExecR\x05execs2\xc4\x04\n" +
 	"\fExecsService\x12-\n" +
 	"\bGetExecs\x12\x14.main.GetExecRequset\x1a\v.main.Execs\x12$\n" +
 	"\bAddExecs\x12\v.main.Execs\x1a\v.main.Execs\x12'\n" +
-	"\vUpdateExecs\x12\v.main.Execs\x1a\v.main.Execs\x125\n" +
-	"\n" +
-	"DeleteExec\x12\r.main.ExecIds\x1a\x18.main.DeleteExecsConfirm\x128\n" +
+	"\vUpdateExecs\x12\v.main.Execs\x1a\v.main.Execs\x126\n" +
+	"\vDeleteExecs\x12\r.main.ExecIds\x1a\x18.main.DeleteExecsConfirm\x128\n" +
 	"\x05Login\x12\x16.main.ExecLogInRequest\x1a\x17.main.ExecLogInResponse\x126\n" +
 	"\x06Logout\x12\x12.main.EmptyRequest\x1a\x18.main.ExecLogoutResponse\x12K\n" +
 	"\x0eUpdatePassword\x12\x1b.main.UpdatePasswordRequest\x1a\x1c.main.UpdatePasswordResponse\x12>\n" +
@@ -1003,7 +1002,7 @@ var file_exec_proto_depIdxs = []int32{
 	13, // 4: main.ExecsService.GetExecs:input_type -> main.GetExecRequset
 	15, // 5: main.ExecsService.AddExecs:input_type -> main.Execs
 	15, // 6: main.ExecsService.UpdateExecs:input_type -> main.Execs
-	12, // 7: main.ExecsService.DeleteExec:input_type -> main.ExecIds
+	12, // 7: main.ExecsService.DeleteExecs:input_type -> main.ExecIds
 	0,  // 8: main.ExecsService.Login:input_type -> main.ExecLogInRequest
 	7,  // 9: main.ExecsService.Logout:input_type -> main.EmptyRequest
 	9,  // 10: main.ExecsService.UpdatePassword:input_type -> main.UpdatePasswordRequest
@@ -1013,7 +1012,7 @@ var file_exec_proto_depIdxs = []int32{
 	15, // 14: main.ExecsService.GetExecs:output_type -> main.Execs
 	15, // 15: main.ExecsService.AddExecs:output_type -> main.Execs
 	15, // 16: main.ExecsService.UpdateExecs:output_type -> main.Execs
-	10, // 17: main.ExecsService.DeleteExec:output_type -> main.DeleteExecsConfirm
+	10, // 17: main.ExecsService.DeleteExecs:output_type -> main.DeleteExecsConfirm
 	1,  // 18: main.ExecsService.Login:output_type -> main.ExecLogInResponse
 	8,  // 19: main.ExecsService.Logout:output_type -> main.ExecLogoutResponse
 	6,  // 20: main.ExecsService.UpdatePassword:output_type -> main.UpdatePasswordResponse

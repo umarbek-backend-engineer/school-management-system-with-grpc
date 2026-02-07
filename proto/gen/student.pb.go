@@ -484,12 +484,12 @@ const file_student_proto_rawDesc = "" +
 	"\bstudents\x18\x01 \x03(\v2\r.main.StudentR\bstudents*\x1a\n" +
 	"\x05Order\x12\a\n" +
 	"\x03ASC\x10\x00\x12\b\n" +
-	"\x04DESC\x10\x012\xea\x01\n" +
+	"\x04DESC\x10\x012\xeb\x01\n" +
 	"\x0fStudentsService\x126\n" +
 	"\vGetStudents\x12\x17.main.GetStudentRequset\x1a\x0e.main.Students\x12-\n" +
 	"\vAddStudents\x12\x0e.main.Students\x1a\x0e.main.Students\x120\n" +
-	"\x0eUpdateStudents\x12\x0e.main.Students\x1a\x0e.main.Students\x12>\n" +
-	"\rDeleteStudent\x12\x10.main.StudentIds\x1a\x1b.main.DeleteStudentsConfirmB\x16Z\x14/proto/gen;grpcapipbb\x06proto3"
+	"\x0eUpdateStudents\x12\x0e.main.Students\x1a\x0e.main.Students\x12?\n" +
+	"\x0eDeleteStudents\x12\x10.main.StudentIds\x1a\x1b.main.DeleteStudentsConfirmB\x16Z\x14/proto/gen;grpcapipbb\x06proto3"
 
 var (
 	file_student_proto_rawDescOnce sync.Once
@@ -524,11 +524,11 @@ var file_student_proto_depIdxs = []int32{
 	4, // 5: main.StudentsService.GetStudents:input_type -> main.GetStudentRequset
 	7, // 6: main.StudentsService.AddStudents:input_type -> main.Students
 	7, // 7: main.StudentsService.UpdateStudents:input_type -> main.Students
-	3, // 8: main.StudentsService.DeleteStudent:input_type -> main.StudentIds
+	3, // 8: main.StudentsService.DeleteStudents:input_type -> main.StudentIds
 	7, // 9: main.StudentsService.GetStudents:output_type -> main.Students
 	7, // 10: main.StudentsService.AddStudents:output_type -> main.Students
 	7, // 11: main.StudentsService.UpdateStudents:output_type -> main.Students
-	1, // 12: main.StudentsService.DeleteStudent:output_type -> main.DeleteStudentsConfirm
+	1, // 12: main.StudentsService.DeleteStudents:output_type -> main.DeleteStudentsConfirm
 	9, // [9:13] is the sub-list for method output_type
 	5, // [5:9] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
