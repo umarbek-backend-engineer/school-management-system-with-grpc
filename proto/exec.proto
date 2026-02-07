@@ -44,7 +44,7 @@ message ForgotPasswordResponse {
 message ResetPasswordRequst {
     string reset_code = 1;
     string new_password = 2;
-    string current_password = 3;
+    string confirm_password = 3;
 }
 
 message Confirmation {

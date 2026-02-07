@@ -225,7 +225,7 @@ type ResetPasswordRequst struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	ResetCode       string                 `protobuf:"bytes,1,opt,name=reset_code,json=resetCode,proto3" json:"reset_code,omitempty"`
 	NewPassword     string                 `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
-	CurrentPassword string                 `protobuf:"bytes,3,opt,name=current_password,json=currentPassword,proto3" json:"current_password,omitempty"`
+	ConfirmPassword string                 `protobuf:"bytes,3,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -274,9 +274,9 @@ func (x *ResetPasswordRequst) GetNewPassword() string {
 	return ""
 }
 
-func (x *ResetPasswordRequst) GetCurrentPassword() string {
+func (x *ResetPasswordRequst) GetConfirmPassword() string {
 	if x != nil {
-		return x.CurrentPassword
+		return x.ConfirmPassword
 	}
 	return ""
 }
@@ -862,7 +862,7 @@ const file_exec_proto_rawDesc = "" +
 	"\n" +
 	"reset_code\x18\x01 \x01(\tR\tresetCode\x12!\n" +
 	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\x12)\n" +
-	"\x10current_password\x18\x03 \x01(\tR\x0fcurrentPassword\"2\n" +
+	"\x10confirm_password\x18\x03 \x01(\tR\x0fconfirmPassword\"2\n" +
 	"\fConfirmation\x12\"\n" +
 	"\fconfirmation\x18\x01 \x01(\bR\fconfirmation\"Y\n" +
 	"\x16UpdatePasswordResponse\x12)\n" +

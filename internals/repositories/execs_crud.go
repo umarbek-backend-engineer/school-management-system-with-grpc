@@ -394,3 +394,38 @@ func ForgotPasswordDBHandler(ctx context.Context, email string) error {
 	}
 	return nil
 }
+
+func ResetPasswordDBHandler(ctx context.Context, hashedTokenString string, password string) error {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return utils.ErrorHandler(err, "Internal Error")
+	}
+	defer client.Disconnect(ctx)
+
+	filter := bson.M{"password_reset_token": hashedTokenString, "password_token_exp": bson.M{"$gt": time.Now().Format(time.RFC3339)}} // building filters and checking if the token is expired or not comparing to time.Now()
+
+	var exec models.Exec
+	err = client.Database("school").Collection("execs").FindOne(ctx, filter).Decode(&exec) // store the resulting value in a variable
+	if err != nil {
+		return utils.ErrorHandler(err, "Invalid or expired token")
+	}
+
+	newPassword, err := utils.HashPassword(password)
+	if err != nil {
+		return utils.ErrorHandler(err, "Internal error")
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"password":             newPassword,
+			"password_reset_token": nil,
+			"password_token_exp":   nil,
+			"password_changed_at":  time.Now().Format(time.RFC3339),
+		},
+	}
+	_, err = client.Database("school").Collection("execs").UpdateOne(ctx, filter, update) // setting token and token exp data into the exec that is requesting
+	if err != nil {
+		return utils.ErrorHandler(err, "Internal error")
+	}
+	return nil
+}

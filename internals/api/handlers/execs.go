@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"school_project_grpc/internals/models"
 	"school_project_grpc/internals/repositories"
@@ -162,4 +164,32 @@ func (s *Server) ForgotPassword(ctx context.Context, req *pb.ForgotPasswordRequs
 		Confirmation: true,
 		Message:      fmt.Sprintf("Password Reset link was sent to %s", email),
 	}, nil
+}
+
+func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequst) (*pb.Confirmation, error) {
+	token := req.GetResetCode()
+
+	if req.NewPassword != req.ConfirmPassword {
+		return nil, status.Error(codes.InvalidArgument, "passwords do not match")
+	}
+
+	// decoding the tokne to check it with db token
+	bytes, err := hex.DecodeString(token)
+	if err != nil {
+		return nil, utils.ErrorHandler(err, "Internal error")
+	}
+
+	// encoding the byte token in db token encription style to compare them
+	hashedToken := sha256.Sum256(bytes)
+	hashedTokenString := hex.EncodeToString(hashedToken[:])
+
+	err = repositories.ResetPasswordDBHandler(ctx, hashedTokenString, req.GetNewPassword())
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.Confirmation{
+		Confirmation: true,
+	}, nil
+
 }
