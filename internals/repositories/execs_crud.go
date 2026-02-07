@@ -211,3 +211,49 @@ func LoginDBHandler(ctx context.Context, username string) (models.Exec, error) {
 	}
 	return exec, nil
 }
+
+func UpdatePasswordDBHandler(ctx context.Context, req *pb.UpdatePasswordRequest) (models.Exec, error) {
+	client, err := mongodb.CreatMongoClient()
+	if err != nil {
+		return models.Exec{}, utils.ErrorHandler(err, "Internal error")
+	}
+	defer client.Disconnect(ctx)
+
+	objectID, err := primitive.ObjectIDFromHex(req.GetId())
+	if err != nil {
+		return models.Exec{}, utils.ErrorHandler(err, "Invalid ID")
+	}
+
+	// retriving the user (exec) from data base
+	var user models.Exec
+	err = client.Database("school").Collection("execs").FindOne(ctx, bson.M{"_id": objectID}).Decode(&user)
+	if err != nil {
+		return models.Exec{}, utils.ErrorHandler(err, "Internal error")
+	}
+
+	err = utils.VerifyPassword(req.CurrentPassword, user.Password)
+	if err != nil {
+		return models.Exec{}, utils.ErrorHandler(err, "Incorrect password/username")
+	}
+
+	// hashing the password
+	hashedPassword, err := utils.HashPassword(req.NewPassword)
+	if err != nil {
+		return models.Exec{}, utils.ErrorHandler(err, "Internal error")
+	}
+
+	// filter of what to update in db
+	update := bson.M{
+		"$set": bson.M{
+			"password":            hashedPassword,
+			"password_changed_at": time.Now().Format(time.RFC3339),
+		},
+	}
+
+	// updating in db
+	_, err = client.Database("school").Collection("execs").UpdateOne(ctx, bson.M{"_id": objectID}, update)
+	if err != nil {
+		return models.Exec{}, utils.ErrorHandler(err, "Internal error")
+	}
+	return user, nil
+}
