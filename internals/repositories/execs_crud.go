@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"school_project_grpc/internals/models"
 	"school_project_grpc/internals/repositories/mongodb"
@@ -208,6 +209,7 @@ func LoginDBHandler(ctx context.Context, username string) (models.Exec, error) {
 
 	// makeing filer for db to know which columt to change
 	filter := bson.M{"username": username}
+	log.Println(filter)
 	var exec models.Exec
 	err = client.Database("school").Collection("execs").FindOne(ctx, filter).Decode(&exec) // inserting the data recieved of the same id into exec
 	if err != nil {

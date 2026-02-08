@@ -34,7 +34,7 @@ func main() {
 	defer lis.Close()
 
 	// registering grpcServer, this is essential to run the server
-	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(itc.ResponseTimeIntercepter, itc.NewRateLimiter(20, time.Second*10).RateLimitIntercepter, itc.Authentication_Intercepter))
+	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(itc.NewRateLimiter(20, time.Second*10).RateLimitIntercepter, itc.ResponseTimeIntercepter, itc.Authentication_Intercepter))
 
 	// registering rpcs
 	pb.RegisterExecsServiceServer(grpcServer, &handlers.Server{})

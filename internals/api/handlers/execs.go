@@ -9,13 +9,23 @@ import (
 	"school_project_grpc/internals/repositories"
 	"school_project_grpc/pkg/utils"
 	pb "school_project_grpc/proto/gen"
+	"strconv"
+	"strings"
+	"time"
 
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
 // Add execs
 func (s *Server) AddExecs(ctx context.Context, req *pb.Execs) (*pb.Execs, error) {
+
+	// authorization
+	err := utils.Authorization(ctx, "admin", "manager")
+	if err != nil {
+		return nil, status.Error(codes.Unavailable, "user is not authorized for this function")
+	}
 
 	// Validate: ID must be empty on create
 	for _, exec := range req.Execs {
@@ -34,6 +44,13 @@ func (s *Server) AddExecs(ctx context.Context, req *pb.Execs) (*pb.Execs, error)
 }
 
 func (s *Server) GetExecs(ctx context.Context, req *pb.GetExecRequset) (*pb.Execs, error) {
+
+	// authorization
+	err := utils.Authorization(ctx, "admin", "manager")
+	if err != nil {
+		return nil, status.Error(codes.Unavailable, "user is not authorized for this function")
+	}
+
 	// build mongo filter from request
 
 	filter, err := buildfilter(req.Exec, &models.Exec{})
@@ -62,6 +79,12 @@ func (s *Server) UpdateExecs(ctx context.Context, req *pb.Execs) (*pb.Execs, err
 }
 
 func (s *Server) DeleteExecs(ctx context.Context, req *pb.ExecIds) (*pb.DeleteExecsConfirm, error) {
+
+	// authorization
+	err := utils.Authorization(ctx, "admin", "manager")
+	if err != nil {
+		return nil, status.Error(codes.Unavailable, "user is not authorized for this function")
+	}
 
 	deletedIds, err := repositories.DeleteExecsDBHandler(ctx, req.GetExecIds())
 	if err != nil {
@@ -129,6 +152,13 @@ func (s *Server) UpdatePassword(ctx context.Context, req *pb.UpdatePasswordReque
 }
 
 func (s *Server) DeactivateUser(ctx context.Context, req *pb.ExecIds) (*pb.Confirmation, error) {
+
+	// authorization
+	err := utils.Authorization(ctx, "admin", "manager")
+	if err != nil {
+		return nil, status.Error(codes.Unavailable, "user is not authorized for this function")
+	}
+
 	res, err := repositories.DeactivateUserDBHandler(ctx, req.GetExecIds())
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -140,6 +170,13 @@ func (s *Server) DeactivateUser(ctx context.Context, req *pb.ExecIds) (*pb.Confi
 }
 
 func (s *Server) ReactivateUser(ctx context.Context, req *pb.ExecIds) (*pb.Confirmation, error) {
+
+	// authorization
+	err := utils.Authorization(ctx, "admin", "manager")
+	if err != nil {
+		return nil, status.Error(codes.Unavailable, "user is not authorized for this function")
+	}
+
 	res, err := repositories.ReactivateUserDBHandler(ctx, req.GetExecIds())
 	if err != nil {
 		return nil, err
@@ -190,6 +227,43 @@ func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequst)
 
 	return &pb.Confirmation{
 		Confirmation: true,
+	}, nil
+
+}
+
+func (s *Server) Logout(ctx context.Context, req *pb.EmptyRequest) (*pb.ExecLogoutResponse, error) {
+	metadata, ok := metadata.FromIncomingContext(ctx) // checking metadata from request
+	if !ok {
+		return nil, status.Error(codes.Unauthenticated, "Missing metadata")
+	}
+
+	// retriving token form ctx
+	val, ok := metadata["authorization"]
+	if !ok {
+		return nil, status.Error(codes.Unauthenticated, "Missing token")
+	}
+
+	token := strings.TrimPrefix(val[0], "Bearer ")
+	if token == "" {
+		return nil, status.Error(codes.Unauthenticated, "Missing token")
+	}
+
+	// extracting expiration time
+	expTimeStamp := ctx.Value("exp")
+	expTimeString := fmt.Sprintf("%v", expTimeStamp)
+
+	expTimeInt, err := strconv.ParseInt(expTimeString, 10, 64)
+	if err != nil {
+		utils.ErrorHandler(err, "")
+		return nil, status.Error(codes.Internal, "Internal Error")
+	}
+
+	exptime := time.Unix(expTimeInt, 0)
+
+	utils.JwtStore.AddToken(token, exptime)
+
+	return &pb.ExecLogoutResponse{
+		LoggedOut: true,
 	}, nil
 
 }

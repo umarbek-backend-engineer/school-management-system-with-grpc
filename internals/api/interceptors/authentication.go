@@ -3,6 +3,7 @@ package interceptors
 import (
 	"context"
 	"os"
+	"school_project_grpc/pkg/utils"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -39,6 +40,11 @@ func Authentication_Intercepter(ctx context.Context, req interface{}, info *grpc
 	tokenStr := strings.TrimPrefix(authH[0], "Bearer ")
 	tokenStr = strings.TrimSpace(tokenStr)
 
+	ok = utils.JwtStore.IsLoggedOut(tokenStr)
+	if ok {
+		return nil, status.Errorf(codes.Unauthenticated, "Unauthorized Access")
+	}
+
 	jwtSecrete := os.Getenv("JWT_SECRETE_STRING")
 
 	// parsing the token
@@ -73,12 +79,13 @@ func Authentication_Intercepter(ctx context.Context, req interface{}, info *grpc
 
 	userID := claims["uid"].(string)
 	username := claims["username"].(string)
-	exp := claims["exp"].(string) // token expiry date
+	expTimef64 := claims["exp"].(float64) // token expiry date
+	expTimeInt64 := int64(expTimef64)
 
 	newCtx := context.WithValue(ctx, "uid", userID)
 	newCtx = context.WithValue(newCtx, "role", role)
 	newCtx = context.WithValue(newCtx, "username", username)
-	newCtx = context.WithValue(newCtx, "exp", exp)
+	newCtx = context.WithValue(newCtx, "exp", expTimeInt64)
 
 	return handler(newCtx, req)
 
