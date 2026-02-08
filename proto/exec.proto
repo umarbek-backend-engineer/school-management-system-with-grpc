@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-// import "validate/validate.proto";\
+import "validate/validate.proto";
 import "student.proto";
 
 package main;
@@ -23,8 +23,8 @@ service ExecsService {
 }
 
 message ExecLogInRequest {
-    string username = 1;
-    string password = 2;
+    string username = 1 [(validate.rules).string = {min_len: 6,  pattern: "^[a-zA-Z0-9@.#$+-]+$", ignore_empty: false}];
+    string password = 2 [(validate.rules).string = {min_len: 6,  pattern: "^[a-zA-Z0-9@.#$+-]+$", ignore_empty: false}];
 }
 
 message ExecLogInResponse {
@@ -85,11 +85,11 @@ message GetExecRequset {
 
 message Exec {
     string id = 1;
-    string first_name = 2;
-    string last_name = 3;
-    string email = 4;
-    string username = 5;
-    string password = 6;
+    string first_name = 2[(validate.rules).string = {pattern: "^[A-Za-z ]*$"}];
+    string last_name = 3[(validate.rules).string = {pattern: "^[A-Za-z ]*$"}];
+    string email = 4[(validate.rules).string = {email:true}];
+    string username = 5[(validate.rules).string = {min_len: 6,  pattern: "^[a-zA-Z0-9@.#$+-]+$", ignore_empty: true}];
+    string password = 6[(validate.rules).string = {min_len: 6,  pattern: "^[a-zA-Z0-9@.#$+-]+$", ignore_empty: true}];
     string passwordChangedAt = 7;
     string userCreatedAt = 8;
     string passwordResetToken = 9;

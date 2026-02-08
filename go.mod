@@ -3,6 +3,7 @@ module school_project_grpc
 go 1.25.5
 
 require (
+	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/go-mail/mail v2.3.1+incompatible
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1

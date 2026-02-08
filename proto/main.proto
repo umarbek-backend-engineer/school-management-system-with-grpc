@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-// import "validate/validate.proto";
+import "validate/validate.proto";
 import "student.proto";
 
 package main;
@@ -27,11 +27,11 @@ message DeleteTeacherConfirm {
 }
 
 message TeacherId {
-    string id = 1;
+    string id = 1 [(validate.rules).string = {min_len: 24, max_len: 24, pattern: "^[a-fA-F0-9]{24}$"}];
 }
 
 message TeacherIds {
-    repeated TeacherId teacherIds = 1;
+    repeated TeacherId teacherIds = 1 [(validate.rules).repeated = {min_items: 1}];
 }
 
 message GetTeacherRequset {
@@ -43,11 +43,21 @@ message GetTeacherRequset {
 
 message Teacher {
     string id = 1;
-    string first_name = 2;
-    string last_name = 3;
-    string email = 4;
-    string class = 5;
-    string subject = 6;
+    string first_name = 2 [(validate.rules).string = {
+        pattern: "^[A-Za-z ]*$"
+    }];
+    string last_name = 3 [(validate.rules).string = {
+        pattern: "^[A-Za-z ]*$"
+    }];
+    string email = 4[(validate.rules).string = {
+        email: true
+    }];
+    string class = 5[(validate.rules).string = {
+        pattern: "^[A-Za-z0-9 ]*$"
+    }];
+    string subject = 6[(validate.rules).string = {
+        pattern: "^[A-Za-z0-9 ]*$"
+    }];
 }
 
 message Teachers {

@@ -7,6 +7,7 @@
 package grpcapipb
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -846,10 +847,10 @@ var File_exec_proto protoreflect.FileDescriptor
 const file_exec_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"exec.proto\x12\x04main\x1a\rstudent.proto\"J\n" +
-	"\x10ExecLogInRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"A\n" +
+	"exec.proto\x12\x04main\x1a\x17validate/validate.proto\x1a\rstudent.proto\"\x8e\x01\n" +
+	"\x10ExecLogInRequest\x12<\n" +
+	"\busername\x18\x01 \x01(\tB \xfaB\x1dr\x1b\x10\x062\x14^[a-zA-Z0-9@.#$+-]+$\xd0\x01\x00R\busername\x12<\n" +
+	"\bpassword\x18\x02 \x01(\tB \xfaB\x1dr\x1b\x10\x062\x14^[a-zA-Z0-9@.#$+-]+$\xd0\x01\x00R\bpassword\"A\n" +
 	"\x11ExecLogInResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\bR\x06status\x12\x14\n" +
 	"\x05token\x18\x02 \x01(\tR\x05token\",\n" +
@@ -885,15 +886,15 @@ const file_exec_proto_rawDesc = "" +
 	"\x0eGetExecRequset\x12\x1e\n" +
 	"\x04exec\x18\x01 \x01(\v2\n" +
 	".main.ExecR\x04exec\x12(\n" +
-	"\asort_by\x18\x02 \x03(\v2\x0f.main.SortFieldR\x06sortBy\"\x8c\x03\n" +
+	"\asort_by\x18\x02 \x03(\v2\x0f.main.SortFieldR\x06sortBy\"\x83\x04\n" +
 	"\x04Exec\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x122\n" +
 	"\n" +
-	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x03 \x01(\tR\blastName\x12\x14\n" +
-	"\x05email\x18\x04 \x01(\tR\x05email\x12\x1a\n" +
-	"\busername\x18\x05 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x06 \x01(\tR\bpassword\x12,\n" +
+	"first_name\x18\x02 \x01(\tB\x13\xfaB\x10r\x0e2\f^[A-Za-z ]*$R\tfirstName\x120\n" +
+	"\tlast_name\x18\x03 \x01(\tB\x13\xfaB\x10r\x0e2\f^[A-Za-z ]*$R\blastName\x12\x1d\n" +
+	"\x05email\x18\x04 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\x12<\n" +
+	"\busername\x18\x05 \x01(\tB \xfaB\x1dr\x1b\x10\x062\x14^[a-zA-Z0-9@.#$+-]+$\xd0\x01\x01R\busername\x12<\n" +
+	"\bpassword\x18\x06 \x01(\tB \xfaB\x1dr\x1b\x10\x062\x14^[a-zA-Z0-9@.#$+-]+$\xd0\x01\x01R\bpassword\x12,\n" +
 	"\x11passwordChangedAt\x18\a \x01(\tR\x11passwordChangedAt\x12$\n" +
 	"\ruserCreatedAt\x18\b \x01(\tR\ruserCreatedAt\x12.\n" +
 	"\x12passwordResetToken\x18\t \x01(\tR\x12passwordResetToken\x12*\n" +

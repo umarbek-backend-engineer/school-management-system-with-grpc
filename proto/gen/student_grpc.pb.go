@@ -4,8 +4,6 @@
 // - protoc             v6.33.5
 // source: student.proto
 
-// import "validate/validate.proto";
-
 package grpcapipb
 
 import (
