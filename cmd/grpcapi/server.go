@@ -4,8 +4,10 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"school_project_grpc/internals/api/handlers"
+	itc "school_project_grpc/internals/api/interceptors"
 	pb "school_project_grpc/proto/gen"
 
 	"github.com/joho/godotenv"
@@ -32,7 +34,7 @@ func main() {
 	defer lis.Close()
 
 	// registering grpcServer, this is essential to run the server
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(itc.ResponseTimeIntercepter, itc.NewRateLimiter(20, time.Second*10).RateLimitIntercepter, itc.Authentication_Intercepter))
 
 	// registering rpcs
 	pb.RegisterExecsServiceServer(grpcServer, &handlers.Server{})
